@@ -14,22 +14,25 @@ export const Route = createFileRoute("/api/webhooks/github")({
 				const rawBody = await request.text();
 
 				const eventName = headers["x-github-event"]; // note lowercase in JS
+
 				if (!eventName) {
 					return new Response("Missing X-GitHub-Event", { status: 400 });
 				}
 
 				const verified = await webhooks.verify(
 					rawBody,
-					headers["x-hub-signature"] as string,
+					headers["x-hub-signature-256"] as string,
 				);
 
-				console.log("verified", verified, process.env.GITHUB_WEBHOOK_SECRET);
+				if (!verified) {
+					return new Response("Unauthorized", { status: 401 });
+				}
 
 				// Emit to Inngest as "github.<event>"
-				// await inngest.send({
-				// 	name: "github." + eventName.trim().replace("Event", "").toLowerCase(),
-				// 	data: body,
-				// });
+				await inngest.send({
+					name: `github.${eventName}`,
+					data: JSON.parse(rawBody),
+				});
 
 				return new Response("ok", { status: 200 });
 			},
