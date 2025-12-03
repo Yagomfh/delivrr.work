@@ -1,5 +1,5 @@
 {
-  "name": "frontend",
+  "name": "delivrr.work",
   "private": true,
   "type": "module",
   "scripts": {
@@ -14,7 +14,8 @@
     "db:migrate": "drizzle-kit migrate",
     "db:push": "drizzle-kit push",
     "db:pull": "drizzle-kit pull",
-    "db:studio": "drizzle-kit studio"
+    "db:studio": "drizzle-kit studio",
+    "inngest:dev": "tsx inngest/serve.ts"
   },
   "dependencies": {
     "@radix-ui/react-label": "^2.1.8",
@@ -43,6 +44,7 @@
     "clsx": "^2.1.1",
     "drizzle-kit": "^0.30.0",
     "drizzle-orm": "^0.39.0",
+    "inngest": "^3.20.0",
     "lucide-react": "^0.544.0",
     "motion": "^12.23.25",
     "nitro": "latest",
