@@ -15,6 +15,7 @@ import { Route as LandingIndexRouteImport } from './routes/_landing/index'
 import { Route as ApiInngestRouteImport } from './routes/api/inngest'
 import { Route as AuthSignInRouteImport } from './routes/_auth/sign-in'
 import { Route as AppAppRouteImport } from './routes/_app/app'
+import { Route as ApiWebhooksGithubRouteImport } from './routes/api/webhooks/github'
 import { Route as ApiTrpcSplatRouteImport } from './routes/api/trpc/$'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
 
@@ -46,6 +47,11 @@ const AppAppRoute = AppAppRouteImport.update({
   path: '/app',
   getParentRoute: () => AppRoute,
 } as any)
+const ApiWebhooksGithubRoute = ApiWebhooksGithubRouteImport.update({
+  id: '/api/webhooks/github',
+  path: '/api/webhooks/github',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiTrpcSplatRoute = ApiTrpcSplatRouteImport.update({
   id: '/api/trpc/$',
   path: '/api/trpc/$',
@@ -64,6 +70,7 @@ export interface FileRoutesByFullPath {
   '/': typeof LandingIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/trpc/$': typeof ApiTrpcSplatRoute
+  '/api/webhooks/github': typeof ApiWebhooksGithubRoute
 }
 export interface FileRoutesByTo {
   '/app': typeof AppAppRoute
@@ -72,6 +79,7 @@ export interface FileRoutesByTo {
   '/': typeof LandingIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/trpc/$': typeof ApiTrpcSplatRoute
+  '/api/webhooks/github': typeof ApiWebhooksGithubRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -83,6 +91,7 @@ export interface FileRoutesById {
   '/_landing/': typeof LandingIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/trpc/$': typeof ApiTrpcSplatRoute
+  '/api/webhooks/github': typeof ApiWebhooksGithubRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -93,8 +102,16 @@ export interface FileRouteTypes {
     | '/'
     | '/api/auth/$'
     | '/api/trpc/$'
+    | '/api/webhooks/github'
   fileRoutesByTo: FileRoutesByTo
-  to: '/app' | '/sign-in' | '/api/inngest' | '/' | '/api/auth/$' | '/api/trpc/$'
+  to:
+    | '/app'
+    | '/sign-in'
+    | '/api/inngest'
+    | '/'
+    | '/api/auth/$'
+    | '/api/trpc/$'
+    | '/api/webhooks/github'
   id:
     | '__root__'
     | '/_app'
@@ -105,6 +122,7 @@ export interface FileRouteTypes {
     | '/_landing/'
     | '/api/auth/$'
     | '/api/trpc/$'
+    | '/api/webhooks/github'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -114,6 +132,7 @@ export interface RootRouteChildren {
   LandingIndexRoute: typeof LandingIndexRoute
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
   ApiTrpcSplatRoute: typeof ApiTrpcSplatRoute
+  ApiWebhooksGithubRoute: typeof ApiWebhooksGithubRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -160,6 +179,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppAppRouteImport
       parentRoute: typeof AppRoute
     }
+    '/api/webhooks/github': {
+      id: '/api/webhooks/github'
+      path: '/api/webhooks/github'
+      fullPath: '/api/webhooks/github'
+      preLoaderRoute: typeof ApiWebhooksGithubRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/trpc/$': {
       id: '/api/trpc/$'
       path: '/api/trpc/$'
@@ -204,6 +230,7 @@ const rootRouteChildren: RootRouteChildren = {
   LandingIndexRoute: LandingIndexRoute,
   ApiAuthSplatRoute: ApiAuthSplatRoute,
   ApiTrpcSplatRoute: ApiTrpcSplatRoute,
+  ApiWebhooksGithubRoute: ApiWebhooksGithubRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

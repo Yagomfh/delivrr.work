@@ -1,6 +1,7 @@
 // biome-ignore lint/suspicious/noExplicitAny: TODO: Fix this
 export function transform(evt: any, headers: Record<string, string> = {}) {
 	const name = headers["X-Github-Event"];
+
 	return {
 		// Use the event as the data without modification
 		data: evt,
