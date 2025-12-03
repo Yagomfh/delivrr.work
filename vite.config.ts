@@ -7,6 +7,9 @@ import tailwindcss from '@tailwindcss/vite'
 import { nitro } from 'nitro/vite'
 
 const config = defineConfig({
+  server: {
+    allowedHosts: ['4a604ac19e0f.ngrok-free.app']
+  },
   plugins: [
     devtools(),
     nitro(),
