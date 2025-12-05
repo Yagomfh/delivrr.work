@@ -5,6 +5,7 @@ import { NonRetriableError } from "inngest";
 import { db } from "@/db";
 import { projects, summaries } from "@/db/schema";
 import { auth } from "@/integrations/better-auth/auth";
+import { ee } from "@/integrations/trpc/events";
 import { inngest } from "../client";
 
 export const githubPushFn = inngest.createFunction(
@@ -25,21 +26,24 @@ export const githubPushFn = inngest.createFunction(
 			return;
 		}
 
-		const [summary] = await db
-			.insert(summaries)
-			.values({
-				projectId: project.id,
-				commitUrl: `https://github.com/${data.repository.owner.login}/${data.repository.name}/commit/${data.after}`,
-				senderName: data.sender.name,
-				senderAvatar: data.sender.avatar_url,
-				headCommitMessage: data.head_commit?.message ?? "",
-				headCommitTimestamp: data.head_commit?.timestamp
-					? new Date(data.head_commit.timestamp)
-					: new Date(),
-				errorMessage: null,
-				summary: null,
-			})
-			.returning({ id: summaries.id });
+		const [summary] = await step.run("create-summary", async () =>
+			db
+				.insert(summaries)
+				.values({
+					projectId: project.id,
+					commitUrl: `https://github.com/${data.repository.owner.login}/${data.repository.name}/commit/${data.after}`,
+					senderName: data.sender.login,
+					senderAvatar: data.sender.avatar_url,
+					headCommitMessage: data.head_commit?.message ?? "",
+					headCommitTimestamp: data.head_commit?.timestamp
+						? new Date(data.head_commit.timestamp)
+						: new Date(),
+					errorMessage: null,
+					summary: null,
+				})
+				.returning({ id: summaries.id }),
+		);
+		ee.emit("summary", "created", project.userId);
 
 		if (!summary) {
 			return;
@@ -92,6 +96,7 @@ export const githubPushFn = inngest.createFunction(
 					status: "failed",
 				})
 				.where(eq(summaries.id, summary.id));
+			ee.emit("summary", "updated", project.userId);
 			return;
 		}
 
@@ -123,6 +128,7 @@ ${patch}`,
 					} catch (error) {
 						// For LLM errors (rate limits, API errors, etc.), don't retry
 						// This prevents wasting credits on retries
+
 						throw new NonRetriableError(
 							`Failed to generate summary for patch ${index}: ${error instanceof Error ? error.message : String(error)}`,
 							{ cause: error },
@@ -133,24 +139,28 @@ ${patch}`,
 		);
 
 		// Extract successful summaries and handle failures
-		const successfulSummaries = patchesSummaries.map(async (result, index) => {
-			if (result.status === "fulfilled") {
-				return result.value;
-			}
-			// Return a fallback message for failed summaries
-			console.error(`Failed to summarize patch ${index}:`, result.reason);
-			await db
-				.update(summaries)
-				.set({
-					errorMessage:
-						result.reason instanceof Error
-							? result.reason.message
-							: String(result.reason),
-					status: "failed",
-				})
-				.where(eq(summaries.id, summary.id));
-			return `[Summary unavailable: ${result.reason instanceof Error ? result.reason.message : String(result.reason)}]`;
-		});
+		const successfulSummaries = await Promise.all(
+			patchesSummaries.map(async (result, index) => {
+				if (result.status === "fulfilled") {
+					return result.value;
+				}
+				// Return a fallback message for failed summaries
+				console.error(`Failed to summarize patch ${index}:`, result.reason);
+				await db
+					.update(summaries)
+					.set({
+						errorMessage:
+							result.reason instanceof Error
+								? result.reason.message
+								: String(result.reason),
+						status: "failed",
+					})
+					.where(eq(summaries.id, summary.id));
+
+				ee.emit("summary", "updated", project.userId);
+				return `[Summary unavailable: ${result.reason instanceof Error ? result.reason.message : String(result.reason)}]`;
+			}),
+		);
 
 		const finalSummary = await generateText({
 			model: "google/gemini-2.5-flash",
@@ -158,9 +168,10 @@ ${patch}`,
 
 Expected behavior:
 - Write a non-technical summary of the work delivered
-- Use bullet list
+- Structure the content in a way that is easy to understand for a non-technical audience
 - Only output the answer and nothing more
 - Be factual and transparent, we want the client to know what is hapening
+- Output the summary in markdown format only
 
 Text to summarise:
 ${successfulSummaries.join("\n\n")}
@@ -175,5 +186,6 @@ ${successfulSummaries.join("\n\n")}
 				status: "completed",
 			})
 			.where(eq(summaries.id, summary.id));
+		ee.emit("summary", "updated", project.userId);
 	},
 );
