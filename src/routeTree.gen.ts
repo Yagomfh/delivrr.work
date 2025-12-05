@@ -12,12 +12,14 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as AuthRouteImport } from './routes/_auth'
 import { Route as AppRouteImport } from './routes/_app'
 import { Route as LandingIndexRouteImport } from './routes/_landing/index'
+import { Route as ApiTestRouteImport } from './routes/api/test'
 import { Route as ApiInngestRouteImport } from './routes/api/inngest'
 import { Route as AuthSignInRouteImport } from './routes/_auth/sign-in'
 import { Route as AppAppRouteImport } from './routes/_app/app'
 import { Route as ApiWebhooksGithubRouteImport } from './routes/api/webhooks/github'
 import { Route as ApiTrpcSplatRouteImport } from './routes/api/trpc/$'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
+import { Route as AppSummariesIdRouteImport } from './routes/_app/summaries.$id'
 import { Route as AppProjectsSettingsRouteImport } from './routes/_app/projects/settings'
 import { Route as AppProjectsAddRouteImport } from './routes/_app/projects/add'
 import { Route as ApiInstallationsGithubNewRouteImport } from './routes/api/installations/github/new'
@@ -34,6 +36,11 @@ const AppRoute = AppRouteImport.update({
 const LandingIndexRoute = LandingIndexRouteImport.update({
   id: '/_landing/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiTestRoute = ApiTestRouteImport.update({
+  id: '/api/test',
+  path: '/api/test',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiInngestRoute = ApiInngestRouteImport.update({
@@ -66,6 +73,11 @@ const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
   path: '/api/auth/$',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AppSummariesIdRoute = AppSummariesIdRouteImport.update({
+  id: '/summaries/$id',
+  path: '/summaries/$id',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppProjectsSettingsRoute = AppProjectsSettingsRouteImport.update({
   id: '/projects/settings',
   path: '/projects/settings',
@@ -93,9 +105,11 @@ export interface FileRoutesByFullPath {
   '/app': typeof AppAppRoute
   '/sign-in': typeof AuthSignInRoute
   '/api/inngest': typeof ApiInngestRoute
+  '/api/test': typeof ApiTestRoute
   '/': typeof LandingIndexRoute
   '/projects/add': typeof AppProjectsAddRoute
   '/projects/settings': typeof AppProjectsSettingsRoute
+  '/summaries/$id': typeof AppSummariesIdRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/trpc/$': typeof ApiTrpcSplatRoute
   '/api/webhooks/github': typeof ApiWebhooksGithubRoute
@@ -106,9 +120,11 @@ export interface FileRoutesByTo {
   '/app': typeof AppAppRoute
   '/sign-in': typeof AuthSignInRoute
   '/api/inngest': typeof ApiInngestRoute
+  '/api/test': typeof ApiTestRoute
   '/': typeof LandingIndexRoute
   '/projects/add': typeof AppProjectsAddRoute
   '/projects/settings': typeof AppProjectsSettingsRoute
+  '/summaries/$id': typeof AppSummariesIdRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/trpc/$': typeof ApiTrpcSplatRoute
   '/api/webhooks/github': typeof ApiWebhooksGithubRoute
@@ -122,9 +138,11 @@ export interface FileRoutesById {
   '/_app/app': typeof AppAppRoute
   '/_auth/sign-in': typeof AuthSignInRoute
   '/api/inngest': typeof ApiInngestRoute
+  '/api/test': typeof ApiTestRoute
   '/_landing/': typeof LandingIndexRoute
   '/_app/projects/add': typeof AppProjectsAddRoute
   '/_app/projects/settings': typeof AppProjectsSettingsRoute
+  '/_app/summaries/$id': typeof AppSummariesIdRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/trpc/$': typeof ApiTrpcSplatRoute
   '/api/webhooks/github': typeof ApiWebhooksGithubRoute
@@ -137,9 +155,11 @@ export interface FileRouteTypes {
     | '/app'
     | '/sign-in'
     | '/api/inngest'
+    | '/api/test'
     | '/'
     | '/projects/add'
     | '/projects/settings'
+    | '/summaries/$id'
     | '/api/auth/$'
     | '/api/trpc/$'
     | '/api/webhooks/github'
@@ -150,9 +170,11 @@ export interface FileRouteTypes {
     | '/app'
     | '/sign-in'
     | '/api/inngest'
+    | '/api/test'
     | '/'
     | '/projects/add'
     | '/projects/settings'
+    | '/summaries/$id'
     | '/api/auth/$'
     | '/api/trpc/$'
     | '/api/webhooks/github'
@@ -165,9 +187,11 @@ export interface FileRouteTypes {
     | '/_app/app'
     | '/_auth/sign-in'
     | '/api/inngest'
+    | '/api/test'
     | '/_landing/'
     | '/_app/projects/add'
     | '/_app/projects/settings'
+    | '/_app/summaries/$id'
     | '/api/auth/$'
     | '/api/trpc/$'
     | '/api/webhooks/github'
@@ -179,6 +203,7 @@ export interface RootRouteChildren {
   AppRoute: typeof AppRouteWithChildren
   AuthRoute: typeof AuthRouteWithChildren
   ApiInngestRoute: typeof ApiInngestRoute
+  ApiTestRoute: typeof ApiTestRoute
   LandingIndexRoute: typeof LandingIndexRoute
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
   ApiTrpcSplatRoute: typeof ApiTrpcSplatRoute
@@ -208,6 +233,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof LandingIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/test': {
+      id: '/api/test'
+      path: '/api/test'
+      fullPath: '/api/test'
+      preLoaderRoute: typeof ApiTestRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/inngest': {
@@ -252,6 +284,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiAuthSplatRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_app/summaries/$id': {
+      id: '/_app/summaries/$id'
+      path: '/summaries/$id'
+      fullPath: '/summaries/$id'
+      preLoaderRoute: typeof AppSummariesIdRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/_app/projects/settings': {
       id: '/_app/projects/settings'
       path: '/projects/settings'
@@ -287,12 +326,14 @@ interface AppRouteChildren {
   AppAppRoute: typeof AppAppRoute
   AppProjectsAddRoute: typeof AppProjectsAddRoute
   AppProjectsSettingsRoute: typeof AppProjectsSettingsRoute
+  AppSummariesIdRoute: typeof AppSummariesIdRoute
 }
 
 const AppRouteChildren: AppRouteChildren = {
   AppAppRoute: AppAppRoute,
   AppProjectsAddRoute: AppProjectsAddRoute,
   AppProjectsSettingsRoute: AppProjectsSettingsRoute,
+  AppSummariesIdRoute: AppSummariesIdRoute,
 }
 
 const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
@@ -311,6 +352,7 @@ const rootRouteChildren: RootRouteChildren = {
   AppRoute: AppRouteWithChildren,
   AuthRoute: AuthRouteWithChildren,
   ApiInngestRoute: ApiInngestRoute,
+  ApiTestRoute: ApiTestRoute,
   LandingIndexRoute: LandingIndexRoute,
   ApiAuthSplatRoute: ApiAuthSplatRoute,
   ApiTrpcSplatRoute: ApiTrpcSplatRoute,

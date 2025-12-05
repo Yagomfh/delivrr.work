@@ -4,6 +4,7 @@ import {
 	integer,
 	pgEnum,
 	pgTable,
+	real,
 	serial,
 	text,
 	timestamp,
@@ -51,6 +52,7 @@ export const summaries = pgTable("summaries", {
 	errorMessage: text("error_message"),
 	projectId: integer("project_id").references(() => projects.id),
 	commitUrl: text("commit_url").notNull(),
+	patchesInKB: real("patches_in_kb"),
 	createdAt: timestamp("created_at").defaultNow().notNull(),
 	updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });

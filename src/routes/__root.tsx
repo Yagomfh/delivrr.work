@@ -7,6 +7,7 @@ import {
 } from "@tanstack/react-router";
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
 import type { TRPCOptionsProxy } from "@trpc/tanstack-react-query";
+import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "@/components/ui/sonner";
 
 import type { TRPCRouter } from "@/integrations/trpc/router";
@@ -46,25 +47,46 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
 
 function RootDocument({ children }: { children: React.ReactNode }) {
 	return (
-		<html lang="en">
+		<html lang="en" suppressHydrationWarning>
 			<head>
 				<HeadContent />
+				{/* biome-ignore lint: Required to prevent theme flash */}
+				<script
+					dangerouslySetInnerHTML={{
+						__html: `
+							(function() {
+								const storageKey = 'vite-ui-theme';
+								const theme = localStorage.getItem(storageKey) || 'system';
+								const root = document.documentElement;
+								
+								if (theme === 'system') {
+									const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+									root.classList.add(systemTheme);
+								} else {
+									root.classList.add(theme);
+								}
+							})();
+						`,
+					}}
+				/>
 			</head>
 			<body>
-				{children}
-				<Toaster />
-				<TanStackDevtools
-					config={{
-						position: "bottom-right",
-					}}
-					plugins={[
-						{
-							name: "Tanstack Router",
-							render: <TanStackRouterDevtoolsPanel />,
-						},
-						TanStackQueryDevtools,
-					]}
-				/>
+				<ThemeProvider>
+					{children}
+					<Toaster />
+					<TanStackDevtools
+						config={{
+							position: "bottom-right",
+						}}
+						plugins={[
+							{
+								name: "Tanstack Router",
+								render: <TanStackRouterDevtoolsPanel />,
+							},
+							TanStackQueryDevtools,
+						]}
+					/>
+				</ThemeProvider>
 				<Scripts />
 			</body>
 		</html>

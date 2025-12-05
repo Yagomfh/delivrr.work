@@ -83,17 +83,18 @@ export const githubPushFn = inngest.createFunction(
 				?.map((file) => file.patch ?? "")
 				.filter((patch) => patch.length > 0) ?? [];
 
-		const patchesInKB = patches.reduce((sum, str) => {
+		const patchesBytes = patches.reduce((sum, str) => {
 			return sum + Buffer.byteLength(str, "utf8");
 		}, 0);
 
 		// If the patches are > 0.5MB, don't summarize them
-		if (patchesInKB > 500000) {
+		if (patchesBytes > 500000) {
 			await db
 				.update(summaries)
 				.set({
 					errorMessage: "The content of the commit is too large to summarize",
 					status: "failed",
+					patchesInKB: patchesBytes / 1024,
 				})
 				.where(eq(summaries.id, summary.id));
 			ee.emit("summary", "updated", project.userId);
@@ -154,6 +155,7 @@ ${patch}`,
 								? result.reason.message
 								: String(result.reason),
 						status: "failed",
+						patchesInKB: patchesBytes / 1024,
 					})
 					.where(eq(summaries.id, summary.id));
 
@@ -184,6 +186,7 @@ ${successfulSummaries.join("\n\n")}
 			.set({
 				summary: finalSummary.text,
 				status: "completed",
+				patchesInKB: patchesBytes / 1024,
 			})
 			.where(eq(summaries.id, summary.id));
 		ee.emit("summary", "updated", project.userId);

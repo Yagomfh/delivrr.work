@@ -27,6 +27,18 @@
 			"recommended": true
 		}
 	},
+	"overrides": [
+		{
+			"include": ["**/__root.tsx"],
+			"linter": {
+				"rules": {
+					"suspicious": {
+						"noDangerouslySetInnerHtml": "off"
+					}
+				}
+			}
+		}
+	],
 	"javascript": {
 		"formatter": {
 			"quoteStyle": "double"
