@@ -1,5 +1,12 @@
 import { relations } from "drizzle-orm";
-import { index, pgTable, serial, text, timestamp } from "drizzle-orm/pg-core";
+import {
+	index,
+	integer,
+	pgTable,
+	serial,
+	text,
+	timestamp,
+} from "drizzle-orm/pg-core";
 import { user } from "./auth-schema";
 
 export const projects = pgTable(
@@ -25,6 +32,17 @@ export const projectsRelations = relations(projects, ({ one }) => ({
 		references: [user.id],
 	}),
 }));
+
+export const summaries = pgTable("summaries", {
+	id: serial("id").primaryKey(),
+	summary: text("summary").notNull(),
+	projectId: integer("project_id")
+		.notNull()
+		.references(() => projects.id),
+	commitUrl: text("commit_url").notNull(),
+	createdAt: timestamp("created_at").defaultNow().notNull(),
+	updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
 
 export const githubInstallations = pgTable("github_installations", {
 	id: serial("id").primaryKey(),

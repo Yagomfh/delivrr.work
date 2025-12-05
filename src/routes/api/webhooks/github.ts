@@ -29,10 +29,12 @@ export const Route = createFileRoute("/api/webhooks/github")({
 				}
 
 				// Emit to Inngest as "github.<event>"
-				await inngest.send({
-					name: `github.${eventName}`,
-					data: JSON.parse(rawBody),
-				});
+				if (eventName === "push") {
+					await inngest.send({
+						name: `github.push`,
+						data: JSON.parse(rawBody),
+					});
+				}
 
 				return new Response("ok", { status: 200 });
 			},
