@@ -2,6 +2,7 @@ import { relations } from "drizzle-orm";
 import {
 	index,
 	integer,
+	pgEnum,
 	pgTable,
 	serial,
 	text,
@@ -33,16 +34,33 @@ export const projectsRelations = relations(projects, ({ one }) => ({
 	}),
 }));
 
+export const summaryStatusEnum = pgEnum("summary_status", [
+	"pending",
+	"completed",
+	"failed",
+]);
+
 export const summaries = pgTable("summaries", {
 	id: serial("id").primaryKey(),
-	summary: text("summary").notNull(),
-	projectId: integer("project_id")
-		.notNull()
-		.references(() => projects.id),
+	summary: text("summary"),
+	status: summaryStatusEnum("status").default("pending"),
+	senderName: text("sender_name"),
+	senderAvatar: text("sender_avatar"),
+	headCommitMessage: text("head_commit_message"),
+	headCommitTimestamp: timestamp("head_commit_timestamp"),
+	errorMessage: text("error_message"),
+	projectId: integer("project_id").references(() => projects.id),
 	commitUrl: text("commit_url").notNull(),
 	createdAt: timestamp("created_at").defaultNow().notNull(),
 	updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
+
+export const summariesRelations = relations(summaries, ({ one }) => ({
+	project: one(projects, {
+		fields: [summaries.projectId],
+		references: [projects.id],
+	}),
+}));
 
 export const githubInstallations = pgTable("github_installations", {
 	id: serial("id").primaryKey(),

@@ -25,6 +25,26 @@ export const githubPushFn = inngest.createFunction(
 			return;
 		}
 
+		const [summary] = await db
+			.insert(summaries)
+			.values({
+				projectId: project.id,
+				commitUrl: `https://github.com/${data.repository.owner.login}/${data.repository.name}/commit/${data.after}`,
+				senderName: data.sender.name,
+				senderAvatar: data.sender.avatar_url,
+				headCommitMessage: data.head_commit?.message ?? "",
+				headCommitTimestamp: data.head_commit?.timestamp
+					? new Date(data.head_commit.timestamp)
+					: new Date(),
+				errorMessage: null,
+				summary: null,
+			})
+			.returning({ id: summaries.id });
+
+		if (!summary) {
+			return;
+		}
+
 		// Get git diff
 		const gitDiff = await step.run("get-git-diff", async () => {
 			const { repository, after, before } = data;
@@ -58,6 +78,22 @@ export const githubPushFn = inngest.createFunction(
 			gitDiff.files
 				?.map((file) => file.patch ?? "")
 				.filter((patch) => patch.length > 0) ?? [];
+
+		const patchesInKB = patches.reduce((sum, str) => {
+			return sum + Buffer.byteLength(str, "utf8");
+		}, 0);
+
+		// If the patches are > 0.5MB, don't summarize them
+		if (patchesInKB > 500000) {
+			await db
+				.update(summaries)
+				.set({
+					errorMessage: "The content of the commit is too large to summarize",
+					status: "failed",
+				})
+				.where(eq(summaries.id, summary.id));
+			return;
+		}
 
 		if (patches.length === 0) {
 			return [];
@@ -97,12 +133,22 @@ ${patch}`,
 		);
 
 		// Extract successful summaries and handle failures
-		const successfulSummaries = patchesSummaries.map((result, index) => {
+		const successfulSummaries = patchesSummaries.map(async (result, index) => {
 			if (result.status === "fulfilled") {
 				return result.value;
 			}
 			// Return a fallback message for failed summaries
 			console.error(`Failed to summarize patch ${index}:`, result.reason);
+			await db
+				.update(summaries)
+				.set({
+					errorMessage:
+						result.reason instanceof Error
+							? result.reason.message
+							: String(result.reason),
+					status: "failed",
+				})
+				.where(eq(summaries.id, summary.id));
 			return `[Summary unavailable: ${result.reason instanceof Error ? result.reason.message : String(result.reason)}]`;
 		});
 
@@ -121,14 +167,13 @@ ${successfulSummaries.join("\n\n")}
 			`,
 		});
 
-		// Construct commit URL using the tip commit SHA (data.after)
-		// This points to the commit page showing the full diff of all commits in the push
-		const commitUrl = `https://github.com/${data.repository.owner.login}/${data.repository.name}/commit/${data.after}`;
-
-		return db.insert(summaries).values({
-			summary: finalSummary.text,
-			projectId: project.id,
-			commitUrl: commitUrl,
-		});
+		// Update the summary with the final generated text
+		await db
+			.update(summaries)
+			.set({
+				summary: finalSummary.text,
+				status: "completed",
+			})
+			.where(eq(summaries.id, summary.id));
 	},
 );
