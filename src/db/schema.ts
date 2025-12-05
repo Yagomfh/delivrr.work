@@ -1,18 +1,49 @@
-import { pgTable, serial, text, timestamp, varchar } from "drizzle-orm/pg-core";
+import { relations } from "drizzle-orm";
+import { index, pgTable, serial, text, timestamp } from "drizzle-orm/pg-core";
+import { user } from "./auth-schema";
 
-export const todos = pgTable("todos", {
-	id: serial("id").primaryKey(),
-	title: text("title").notNull(),
-	createdAt: timestamp("created_at").defaultNow(),
-});
+export const projects = pgTable(
+	"projects",
+	{
+		id: serial("id").primaryKey(),
+		name: text("name").notNull(),
+		description: text("description"),
+		repository: text("repository").notNull(),
+		icon: text("icon"),
+		userId: text("user_id")
+			.notNull()
+			.references(() => user.id),
+		createdAt: timestamp("created_at").defaultNow().notNull(),
+		updatedAt: timestamp("updated_at").defaultNow().notNull(),
+	},
+	(table) => [index("projects_userId_idx").on(table.userId)],
+);
 
-export const githubSummaries = pgTable("github_summaries", {
+export const projectsRelations = relations(projects, ({ one }) => ({
+	user: one(user, {
+		fields: [projects.userId],
+		references: [user.id],
+	}),
+}));
+
+export const githubInstallations = pgTable("github_installations", {
 	id: serial("id").primaryKey(),
-	repository: text("repository").notNull(),
-	branch: varchar("branch", { length: 255 }).notNull(),
-	commitSha: varchar("commit_sha", { length: 255 }).notNull(),
-	commitMessage: text("commit_message").notNull(),
-	diffSummary: text("diff_summary"),
-	llmSummary: text("llm_summary").notNull(),
+	installationId: text("installation_id"),
+	ownerLogin: text("owner_login"),
+	installationToken: text("installation_token").notNull(),
+	userId: text("user_id")
+		.notNull()
+		.references(() => user.id),
 	createdAt: timestamp("created_at").defaultNow().notNull(),
+	updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
+
+export const githubInstallationsRelations = relations(
+	githubInstallations,
+	({ one }) => ({
+		user: one(user, {
+			fields: [githubInstallations.userId],
+			references: [user.id],
+		}),
+	}),
+);

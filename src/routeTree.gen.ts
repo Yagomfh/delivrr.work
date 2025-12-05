@@ -18,6 +18,10 @@ import { Route as AppAppRouteImport } from './routes/_app/app'
 import { Route as ApiWebhooksGithubRouteImport } from './routes/api/webhooks/github'
 import { Route as ApiTrpcSplatRouteImport } from './routes/api/trpc/$'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
+import { Route as AppProjectsSettingsRouteImport } from './routes/_app/projects/settings'
+import { Route as AppProjectsAddRouteImport } from './routes/_app/projects/add'
+import { Route as ApiInstallationsGithubNewRouteImport } from './routes/api/installations/github/new'
+import { Route as ApiInstallationsGithubCallbackRouteImport } from './routes/api/installations/github/callback'
 
 const AuthRoute = AuthRouteImport.update({
   id: '/_auth',
@@ -62,24 +66,54 @@ const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
   path: '/api/auth/$',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AppProjectsSettingsRoute = AppProjectsSettingsRouteImport.update({
+  id: '/projects/settings',
+  path: '/projects/settings',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppProjectsAddRoute = AppProjectsAddRouteImport.update({
+  id: '/projects/add',
+  path: '/projects/add',
+  getParentRoute: () => AppRoute,
+} as any)
+const ApiInstallationsGithubNewRoute =
+  ApiInstallationsGithubNewRouteImport.update({
+    id: '/api/installations/github/new',
+    path: '/api/installations/github/new',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiInstallationsGithubCallbackRoute =
+  ApiInstallationsGithubCallbackRouteImport.update({
+    id: '/api/installations/github/callback',
+    path: '/api/installations/github/callback',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/app': typeof AppAppRoute
   '/sign-in': typeof AuthSignInRoute
   '/api/inngest': typeof ApiInngestRoute
   '/': typeof LandingIndexRoute
+  '/projects/add': typeof AppProjectsAddRoute
+  '/projects/settings': typeof AppProjectsSettingsRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/trpc/$': typeof ApiTrpcSplatRoute
   '/api/webhooks/github': typeof ApiWebhooksGithubRoute
+  '/api/installations/github/callback': typeof ApiInstallationsGithubCallbackRoute
+  '/api/installations/github/new': typeof ApiInstallationsGithubNewRoute
 }
 export interface FileRoutesByTo {
   '/app': typeof AppAppRoute
   '/sign-in': typeof AuthSignInRoute
   '/api/inngest': typeof ApiInngestRoute
   '/': typeof LandingIndexRoute
+  '/projects/add': typeof AppProjectsAddRoute
+  '/projects/settings': typeof AppProjectsSettingsRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/trpc/$': typeof ApiTrpcSplatRoute
   '/api/webhooks/github': typeof ApiWebhooksGithubRoute
+  '/api/installations/github/callback': typeof ApiInstallationsGithubCallbackRoute
+  '/api/installations/github/new': typeof ApiInstallationsGithubNewRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -89,9 +123,13 @@ export interface FileRoutesById {
   '/_auth/sign-in': typeof AuthSignInRoute
   '/api/inngest': typeof ApiInngestRoute
   '/_landing/': typeof LandingIndexRoute
+  '/_app/projects/add': typeof AppProjectsAddRoute
+  '/_app/projects/settings': typeof AppProjectsSettingsRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/trpc/$': typeof ApiTrpcSplatRoute
   '/api/webhooks/github': typeof ApiWebhooksGithubRoute
+  '/api/installations/github/callback': typeof ApiInstallationsGithubCallbackRoute
+  '/api/installations/github/new': typeof ApiInstallationsGithubNewRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -100,18 +138,26 @@ export interface FileRouteTypes {
     | '/sign-in'
     | '/api/inngest'
     | '/'
+    | '/projects/add'
+    | '/projects/settings'
     | '/api/auth/$'
     | '/api/trpc/$'
     | '/api/webhooks/github'
+    | '/api/installations/github/callback'
+    | '/api/installations/github/new'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/app'
     | '/sign-in'
     | '/api/inngest'
     | '/'
+    | '/projects/add'
+    | '/projects/settings'
     | '/api/auth/$'
     | '/api/trpc/$'
     | '/api/webhooks/github'
+    | '/api/installations/github/callback'
+    | '/api/installations/github/new'
   id:
     | '__root__'
     | '/_app'
@@ -120,9 +166,13 @@ export interface FileRouteTypes {
     | '/_auth/sign-in'
     | '/api/inngest'
     | '/_landing/'
+    | '/_app/projects/add'
+    | '/_app/projects/settings'
     | '/api/auth/$'
     | '/api/trpc/$'
     | '/api/webhooks/github'
+    | '/api/installations/github/callback'
+    | '/api/installations/github/new'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -133,6 +183,8 @@ export interface RootRouteChildren {
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
   ApiTrpcSplatRoute: typeof ApiTrpcSplatRoute
   ApiWebhooksGithubRoute: typeof ApiWebhooksGithubRoute
+  ApiInstallationsGithubCallbackRoute: typeof ApiInstallationsGithubCallbackRoute
+  ApiInstallationsGithubNewRoute: typeof ApiInstallationsGithubNewRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -200,15 +252,47 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiAuthSplatRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_app/projects/settings': {
+      id: '/_app/projects/settings'
+      path: '/projects/settings'
+      fullPath: '/projects/settings'
+      preLoaderRoute: typeof AppProjectsSettingsRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/projects/add': {
+      id: '/_app/projects/add'
+      path: '/projects/add'
+      fullPath: '/projects/add'
+      preLoaderRoute: typeof AppProjectsAddRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/api/installations/github/new': {
+      id: '/api/installations/github/new'
+      path: '/api/installations/github/new'
+      fullPath: '/api/installations/github/new'
+      preLoaderRoute: typeof ApiInstallationsGithubNewRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/installations/github/callback': {
+      id: '/api/installations/github/callback'
+      path: '/api/installations/github/callback'
+      fullPath: '/api/installations/github/callback'
+      preLoaderRoute: typeof ApiInstallationsGithubCallbackRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 interface AppRouteChildren {
   AppAppRoute: typeof AppAppRoute
+  AppProjectsAddRoute: typeof AppProjectsAddRoute
+  AppProjectsSettingsRoute: typeof AppProjectsSettingsRoute
 }
 
 const AppRouteChildren: AppRouteChildren = {
   AppAppRoute: AppAppRoute,
+  AppProjectsAddRoute: AppProjectsAddRoute,
+  AppProjectsSettingsRoute: AppProjectsSettingsRoute,
 }
 
 const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
@@ -231,6 +315,8 @@ const rootRouteChildren: RootRouteChildren = {
   ApiAuthSplatRoute: ApiAuthSplatRoute,
   ApiTrpcSplatRoute: ApiTrpcSplatRoute,
   ApiWebhooksGithubRoute: ApiWebhooksGithubRoute,
+  ApiInstallationsGithubCallbackRoute: ApiInstallationsGithubCallbackRoute,
+  ApiInstallationsGithubNewRoute: ApiInstallationsGithubNewRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
