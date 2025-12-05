@@ -1,6 +1,6 @@
 import { on } from "node:events";
 import type { TRPCRouterRecord } from "@trpc/server";
-import { eq, inArray } from "drizzle-orm";
+import { desc, eq, inArray } from "drizzle-orm";
 import { projects, summaries } from "@/db/schema";
 import { ee } from "../events";
 import { protectedProcedure } from "../init";
@@ -21,6 +21,7 @@ export const summariesRouter = {
 		if (projectIds.length > 0) {
 			const initialSummaries = await opts.ctx.db.query.summaries.findMany({
 				where: inArray(summaries.projectId, projectIds),
+				orderBy: [desc(summaries.headCommitTimestamp)],
 			});
 			yield initialSummaries;
 		} else {
@@ -36,6 +37,7 @@ export const summariesRouter = {
 				// Refetch all summaries for the user when an event occurs
 				const updatedSummaries = await opts.ctx.db.query.summaries.findMany({
 					where: inArray(summaries.projectId, projectIds),
+					orderBy: [desc(summaries.headCommitTimestamp)],
 				});
 				yield updatedSummaries;
 			}
