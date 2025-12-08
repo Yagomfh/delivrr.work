@@ -33,6 +33,10 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
 			{
 				title: "Home | delivrr.work",
 			},
+			{
+				name: "description",
+				content: "delivrr.work is a platform for automated summaries of your github pushes.",
+			},
 		],
 		links: [
 			{
