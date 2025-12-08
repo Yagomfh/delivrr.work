@@ -3,6 +3,7 @@
 import {
 	BookOpen,
 	Bot,
+	Command,
 	GalleryVerticalEnd,
 	LifeBuoy,
 	ScrollText,
@@ -11,16 +12,21 @@ import {
 	SquareTerminal,
 } from "lucide-react";
 
-import { NavMain } from "@/components/nav-main";
-import { NavSecondary } from "@/components/nav-secondary";
-import { NavUser } from "@/components/nav-user";
+import { NavMain } from "@/components/sidebar/nav-main";
+import { NavSecondary } from "@/components/sidebar/nav-secondary";
+import { NavUser } from "@/components/sidebar/nav-user";
 import {
 	Sidebar,
 	SidebarContent,
 	SidebarFooter,
 	SidebarHeader,
+	SidebarMenu,
+	SidebarMenuButton,
+	SidebarMenuItem,
 } from "@/components/ui/sidebar";
-import { ProjectSwitcher } from "./ui/project-switcher";
+import { ProjectSwitcher } from "../ui/project-switcher";
+import { Link } from "@tanstack/react-router";
+import { sidebarItems } from "@/navigation/sidebar/sidebar-items";
 
 const data = {
 	user: {
@@ -102,18 +108,18 @@ const data = {
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 	return (
-		<Sidebar variant="inset" {...props}>
-			<SidebarHeader>
-				<ProjectSwitcher />
-			</SidebarHeader>
-			<SidebarContent>
-				<NavMain items={data.navMain} />
-
-				<NavSecondary items={data.navSecondary} className="mt-auto" />
-			</SidebarContent>
-			<SidebarFooter>
-				<NavUser />
-			</SidebarFooter>
-		</Sidebar>
+		<Sidebar variant={"inset"} collapsible={"icon"} {...props}>
+      <SidebarHeader className="dark:bg-neutral-900">
+        <ProjectSwitcher />
+      </SidebarHeader>
+      <SidebarContent className="dark:bg-neutral-900">
+        <NavMain items={sidebarItems} />
+        {/* <NavDocuments items={data.documents} /> */}
+        {/* <NavSecondary items={data.navSecondary} className="mt-auto" /> */}
+      </SidebarContent>
+      <SidebarFooter className="dark:bg-neutral-900">
+        <NavUser />
+      </SidebarFooter>
+    </Sidebar>
 	);
 }

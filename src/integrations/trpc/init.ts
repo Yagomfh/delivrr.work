@@ -11,7 +11,6 @@ export const createTRPCContext = async ({ headers }: { headers: Headers }) => {
 	return {
 		db,
 		session,
-		headers,
 	};
 };
 

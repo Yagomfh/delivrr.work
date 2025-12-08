@@ -35,10 +35,11 @@ export type ProjectFormValues = z.infer<typeof formSchema>;
 
 export function ProjectForm({
 	onSubmit,
+	id: formId,
 }: {
 	onSubmit: (values: ProjectFormValues) => Promise<void>;
+	id: string;
 }) {
-	const id = useId();
 	const [isLoading, setIsLoading] = useState(false);
 
 	const form = useForm({
@@ -62,33 +63,13 @@ export function ProjectForm({
 	return (
 		<div>
 			<form
-				id={id}
+				id={formId}
 				onSubmit={(e) => {
 					e.preventDefault();
 					form.handleSubmit();
 				}}
 			>
-				<FieldGroup className="flex flex-col gap-8">
-					<FieldGroup className="flex flex-col gap-8">
-						<form.Field
-							name="repository"
-							children={(field) => {
-								const isInvalid =
-									field.state.meta.isTouched && !field.state.meta.isValid;
-								return (
-									<Field data-invalid={isInvalid}>
-										<GithubRepoField
-											value={field.state.value as string}
-											onChange={(value) => field.handleChange(value)}
-										/>
-										{isInvalid && (
-											<FieldError errors={field.state.meta.errors} />
-										)}
-									</Field>
-								);
-							}}
-						/>
-
+					<FieldGroup className="flex flex-col gap-12">
 						<FieldGroup className="flex flex-row gap-8">
 							<div className="flex items-center justify-center">
 								<div className="px-10">
@@ -105,7 +86,7 @@ export function ProjectForm({
 													>
 														<Button
 															variant="outline"
-															className="h-30 w-30 aspect-square rounded-full"
+															className="h-25 w-25 aspect-square rounded-full"
 														>
 															{field.state.value ? (
 																<DynamicIcon
@@ -190,11 +171,28 @@ export function ProjectForm({
 								/>
 							</FieldGroup>
 						</FieldGroup>
+						
+						<form.Field
+							name="repository"
+							children={(field) => {
+								const isInvalid =
+									field.state.meta.isTouched && !field.state.meta.isValid;
+								return (
+									<Field data-invalid={isInvalid}>
+										<GithubRepoField
+											value={field.state.value as string}
+											onChange={(value) => field.handleChange(value)}
+										/>
+										{isInvalid && (
+											<FieldError errors={field.state.meta.errors} />
+										)}
+									</Field>
+								);
+							}}
+						/>
+
+						
 					</FieldGroup>
-					<Button type="submit" form={id} disabled={isLoading}>
-						{isLoading ? <Spinner /> : "Create"}
-					</Button>
-				</FieldGroup>
 			</form>
 		</div>
 	);
