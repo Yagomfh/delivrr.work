@@ -39,8 +39,45 @@ const config = defineConfig({
       'lucide-react/dynamic': path.resolve(__dirname, 'node_modules/lucide-react/dynamic.mjs'),
     },
   },
-  server: {
-    allowedHosts: ['ec10f72ddbd1.ngrok-free.app']
+  build: {
+    chunkSizeWarningLimit: 1000,
+    rollupOptions: {
+      output: {
+        manualChunks: (id) => {
+          // Split TanStack Router into its own chunk
+          if (id.includes('@tanstack/react-router') || id.includes('@tanstack/router-core')) {
+            return 'tanstack-router';
+          }
+          // Split TanStack Query into its own chunk
+          if (id.includes('@tanstack/react-query')) {
+            return 'tanstack-query';
+          }
+          // Split tRPC into its own chunk
+          if (id.includes('@trpc/')) {
+            return 'trpc';
+          }
+          // Split Radix UI components into their own chunk
+          if (id.includes('@radix-ui/')) {
+            return 'radix-ui';
+          }
+          // Split Octokit into its own chunk
+          if (id.includes('@octokit/')) {
+            return 'octokit';
+          }
+          // Split other large dependencies
+          if (id.includes('node_modules')) {
+            if (id.includes('lucide-react') || id.includes('@tabler/icons-react')) {
+              return 'icons';
+            }
+            if (id.includes('fuse.js') || id.includes('date-fns') || id.includes('superjson')) {
+              return 'utils';
+            }
+            // Vendor chunk for other node_modules
+            return 'vendor';
+          }
+        },
+      },
+    },
   },
   plugins: [
     devtools(),
@@ -49,7 +86,9 @@ const config = defineConfig({
         functions: {
           runtime: "bun1.x",
         }
-      }
+      },
+      // Optimize Nitro build
+      minify: true,
     }),
     // this is the plugin that enables path aliases
     viteTsConfigPaths({
