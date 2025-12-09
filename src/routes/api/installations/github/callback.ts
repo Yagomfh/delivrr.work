@@ -2,7 +2,6 @@ import { Octokit } from "@octokit/core";
 import { createFileRoute } from "@tanstack/react-router";
 import { and, eq } from "drizzle-orm";
 import { db } from "@/db";
-import { account } from "@/db/auth-schema";
 import { githubInstallations } from "@/db/schema";
 import { auth } from "@/integrations/better-auth/auth";
 

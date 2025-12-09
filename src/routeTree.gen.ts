@@ -12,7 +12,6 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as AuthRouteImport } from './routes/_auth'
 import { Route as AppRouteImport } from './routes/_app'
 import { Route as LandingIndexRouteImport } from './routes/_landing/index'
-import { Route as ApiTestRouteImport } from './routes/api/test'
 import { Route as ApiInngestRouteImport } from './routes/api/inngest'
 import { Route as AuthSignInRouteImport } from './routes/_auth/sign-in'
 import { Route as AppAppRouteImport } from './routes/_app/app'
@@ -36,11 +35,6 @@ const AppRoute = AppRouteImport.update({
 const LandingIndexRoute = LandingIndexRouteImport.update({
   id: '/_landing/',
   path: '/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ApiTestRoute = ApiTestRouteImport.update({
-  id: '/api/test',
-  path: '/api/test',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiInngestRoute = ApiInngestRouteImport.update({
@@ -105,7 +99,6 @@ export interface FileRoutesByFullPath {
   '/app': typeof AppAppRoute
   '/sign-in': typeof AuthSignInRoute
   '/api/inngest': typeof ApiInngestRoute
-  '/api/test': typeof ApiTestRoute
   '/': typeof LandingIndexRoute
   '/projects/add': typeof AppProjectsAddRoute
   '/projects/settings': typeof AppProjectsSettingsRoute
@@ -120,7 +113,6 @@ export interface FileRoutesByTo {
   '/app': typeof AppAppRoute
   '/sign-in': typeof AuthSignInRoute
   '/api/inngest': typeof ApiInngestRoute
-  '/api/test': typeof ApiTestRoute
   '/': typeof LandingIndexRoute
   '/projects/add': typeof AppProjectsAddRoute
   '/projects/settings': typeof AppProjectsSettingsRoute
@@ -138,7 +130,6 @@ export interface FileRoutesById {
   '/_app/app': typeof AppAppRoute
   '/_auth/sign-in': typeof AuthSignInRoute
   '/api/inngest': typeof ApiInngestRoute
-  '/api/test': typeof ApiTestRoute
   '/_landing/': typeof LandingIndexRoute
   '/_app/projects/add': typeof AppProjectsAddRoute
   '/_app/projects/settings': typeof AppProjectsSettingsRoute
@@ -155,7 +146,6 @@ export interface FileRouteTypes {
     | '/app'
     | '/sign-in'
     | '/api/inngest'
-    | '/api/test'
     | '/'
     | '/projects/add'
     | '/projects/settings'
@@ -170,7 +160,6 @@ export interface FileRouteTypes {
     | '/app'
     | '/sign-in'
     | '/api/inngest'
-    | '/api/test'
     | '/'
     | '/projects/add'
     | '/projects/settings'
@@ -187,7 +176,6 @@ export interface FileRouteTypes {
     | '/_app/app'
     | '/_auth/sign-in'
     | '/api/inngest'
-    | '/api/test'
     | '/_landing/'
     | '/_app/projects/add'
     | '/_app/projects/settings'
@@ -203,7 +191,6 @@ export interface RootRouteChildren {
   AppRoute: typeof AppRouteWithChildren
   AuthRoute: typeof AuthRouteWithChildren
   ApiInngestRoute: typeof ApiInngestRoute
-  ApiTestRoute: typeof ApiTestRoute
   LandingIndexRoute: typeof LandingIndexRoute
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
   ApiTrpcSplatRoute: typeof ApiTrpcSplatRoute
@@ -233,13 +220,6 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof LandingIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/test': {
-      id: '/api/test'
-      path: '/api/test'
-      fullPath: '/api/test'
-      preLoaderRoute: typeof ApiTestRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/inngest': {
@@ -352,7 +332,6 @@ const rootRouteChildren: RootRouteChildren = {
   AppRoute: AppRouteWithChildren,
   AuthRoute: AuthRouteWithChildren,
   ApiInngestRoute: ApiInngestRoute,
-  ApiTestRoute: ApiTestRoute,
   LandingIndexRoute: LandingIndexRoute,
   ApiAuthSplatRoute: ApiAuthSplatRoute,
   ApiTrpcSplatRoute: ApiTrpcSplatRoute,
