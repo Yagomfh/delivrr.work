@@ -2,8 +2,8 @@ import {
   EllipsisVertical,
   CircleUser,
   CreditCard,
-  MessageSquareDot,
   LogOut,
+  Bell,
 } from "lucide-react";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -96,7 +96,7 @@ export function NavUser() {
                 Billing
               </DropdownMenuItem>
               <DropdownMenuItem>
-                <MessageSquareDot />
+                <Bell />
                 Notifications
               </DropdownMenuItem>
             </DropdownMenuGroup>

@@ -42,21 +42,15 @@ export const sidebarItems: NavGroup[] = [
         icon: LayoutDashboard,
       },
       {
-        title: "Analytics",
-        url: "/dashboard/crm",
-        icon: ChartBar,
-      },
-      {
         title: "Settings",
-        url: "/dashboard/finance",
+        url: "/settings",
         icon: Settings,
       },
       {
         title: "Integrations",
-        url: "/dashboard/coming-soon",
+        url: "/integrations",
         icon: Zap,
       },
     ],
   },
-  
 ];
