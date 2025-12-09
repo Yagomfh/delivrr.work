@@ -2,10 +2,6 @@ import { Webhooks } from "@octokit/webhooks";
 import { createFileRoute } from "@tanstack/react-router";
 import { inngest } from "@/integrations/inngest/client";
 
-const webhooks = new Webhooks({
-	secret: process.env.GITHUB_WEBHOOK_SECRET as string,
-});
-
 export const Route = createFileRoute("/api/webhooks/github")({
 	server: {
 		handlers: {
@@ -18,6 +14,10 @@ export const Route = createFileRoute("/api/webhooks/github")({
 				if (!eventName) {
 					return new Response("Missing X-GitHub-Event", { status: 400 });
 				}
+
+				const webhooks = new Webhooks({
+					secret: process.env.GITHUB_WEBHOOK_SECRET as string,
+				});
 
 				const verified = await webhooks.verify(
 					rawBody,

@@ -1,6 +1,6 @@
 import * as React from "react";
 
-import { LayoutDashboard, ChartBar, Gauge, ShoppingBag, GraduationCap, Forklift, Search, Settings, Zap, Bell, User, CreditCard } from "lucide-react";
+import { LayoutDashboard, ChartBar, Search, Settings, Zap, Bell, User, CreditCard } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -42,7 +42,7 @@ export function SearchDialog() {
     <>
       <Button
         variant="link"
-        className="text-muted-foreground !px-0 font-normal hover:no-underline"
+        className="text-muted-foreground px-0! font-normal hover:no-underline"
         onClick={() => setOpen(true)}
       >
         <Search className="size-4" />
@@ -62,7 +62,7 @@ export function SearchDialog() {
                 {searchItems
                   .filter((item) => item.group === group)
                   .map((item) => (
-                    <CommandItem className="!py-1.5" key={item.label} onSelect={() => {
+                    <CommandItem className="py-1.5!" key={item.label} onSelect={() => {
                       setOpen(false);
                       navigate({ to: item.to });
                     }}>
