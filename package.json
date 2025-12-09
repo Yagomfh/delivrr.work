@@ -4,8 +4,8 @@
   "type": "module",
   "scripts": {
     "dev": "bunx --bun vite",
-    "build": "bunx --bun vite build",
-    "serve": "bunx --bun vite preview",
+    "build": "bun --bun vite build", 
+    "serve": "bun --bun vite preview",
     "format": "bun run biome format",
     "lint": "bun run biome lint",
     "check": "bun run biome check",
