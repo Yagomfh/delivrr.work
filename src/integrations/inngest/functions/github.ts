@@ -9,111 +9,100 @@ import { ee } from "@/integrations/trpc/events";
 import { inngest } from "../client";
 
 export const githubPushFn = inngest.createFunction(
-	{ id: "github-push" },
-	{ event: "github.push" },
-	async ({ event, step }) => {
-		const { data } = event;
+  { id: "github-push" },
+  { event: "github.push" },
+  async ({ event, step }) => {
+    const { data } = event;
 
-		const project = await db.query.projects.findFirst({
-			columns: {
-				userId: true,
-				id: true,
-			},
-			where: eq(projects.repository, data.repository.full_name),
-		});
+    const project = await db.query.projects.findFirst({
+      columns: {
+        userId: true,
+        id: true,
+      },
+      where: eq(projects.repository, data.repository.full_name),
+    });
 
-		if (!project) {
-			return;
-		}
+    if (!project) {
+      return;
+    }
 
-		const [summary] = await step.run("create-summary", async () =>
-			db
-				.insert(summaries)
-				.values({
-					projectId: project.id,
-					commitUrl: `https://github.com/${data.repository.owner.login}/${data.repository.name}/commit/${data.after}`,
-					senderName: data.sender.login,
-					senderAvatar: data.sender.avatar_url,
-					headCommitMessage: data.head_commit?.message ?? "",
-					headCommitTimestamp: data.head_commit?.timestamp
-						? new Date(data.head_commit.timestamp)
-						: new Date(),
-					errorMessage: null,
-					summary: null,
-				})
-				.returning({ id: summaries.id }),
-		);
-		ee.emit("summary", "created", project.userId);
+    const [summary] = await step.run("create-summary", async () =>
+      db
+        .insert(summaries)
+        .values({
+          projectId: project.id,
+          commitUrl: `https://github.com/${data.repository.owner.login}/${data.repository.name}/commit/${data.after}`,
+          senderName: data.sender.login,
+          senderAvatar: data.sender.avatar_url,
+          headCommitMessage: data.head_commit?.message ?? "",
+          headCommitTimestamp: data.head_commit?.timestamp
+            ? new Date(data.head_commit.timestamp)
+            : new Date(),
+          errorMessage: null,
+          summary: null,
+        })
+        .returning({ id: summaries.id })
+    );
+    ee.emit("summary", "created", project.userId);
 
-		if (!summary) {
-			return;
-		}
+    if (!summary) {
+      return;
+    }
 
-		// Get git diff
-		const gitDiff = await step.run("get-git-diff", async () => {
-			const { repository, after, before } = data;
+    // Get git diff
+    const gitDiff = await step.run("get-git-diff", async () => {
+      const { repository, after, before } = data;
 
-			const { accessToken } = await auth.api.getAccessToken({
-				body: {
-					providerId: "github",
-					userId: String(project.userId),
-				},
-			});
+      const { accessToken } = await auth.api.getAccessToken({
+        body: {
+          providerId: "github",
+          userId: String(project.userId),
+        },
+      });
 
-			const octokit = new Octokit({
-				auth: accessToken,
-			});
+      const octokit = new Octokit({
+        auth: accessToken,
+      });
 
-			const diff = await octokit.request(
-				"GET /repos/{owner}/{repo}/compare/{base}...{head}",
-				{
-					owner: repository.owner.login,
-					repo: repository.name,
-					base: before,
-					head: after,
-				},
-			);
+      const diff = await octokit.request(
+        "GET /repos/{owner}/{repo}/compare/{base}...{head}",
+        {
+          owner: repository.owner.login,
+          repo: repository.name,
+          base: before,
+          head: after,
+        }
+      );
 
-			return diff.data;
-		});
+      return diff.data;
+    });
 
-		// Extract patches and filter out empty ones
-		const patches =
-			gitDiff.files
-				?.map((file) => file.patch ?? "")
-				.filter((patch) => patch.length > 0) ?? [];
+    // Extract patches and filter out empty ones
+    const patches = await step.run(
+      "extract-patches",
+      async () =>
+        gitDiff.files
+          ?.map((file) => file.patch ?? "")
+          .filter((patch) => patch.length > 0) ?? []
+    );
 
-		const patchesBytes = patches.reduce((sum, str) => {
-			return sum + Buffer.byteLength(str, "utf8");
-		}, 0);
+    const patchesBytes = await step.run("calculate-patches-bytes", async () =>
+      patches.reduce((sum, str) => {
+        return sum + Buffer.byteLength(str, "utf8");
+      }, 0)
+    );
 
-		// If the patches are > 0.5MB, don't summarize them
-		if (patchesBytes > 500000) {
-			await db
-				.update(summaries)
-				.set({
-					errorMessage: "The content of the commit is too large to summarize",
-					status: "failed",
-					patchesInKB: patchesBytes / 1024,
-				})
-				.where(eq(summaries.id, summary.id));
-			ee.emit("summary", "updated", project.userId);
-			return;
-		}
+    //TODO: If the patches are > 0.5MB, don't summarize them
 
-		if (patches.length === 0) {
-			return [];
-		}
-
-		// Generate summaries for all patches in parallel
-		// Use allSettled to handle partial failures gracefully
-		const patchesSummaries = await Promise.allSettled(
-			patches.map((patch, index) => {
-				return step.run(`summarize-patch-${index}`, async () => {
-					try {
-						const result = await generateText({
-							model: "google/gemini-2.0-flash",
-							prompt: `You are a helpful assistant that summarizes code changes.
+    // Generate summaries for all patches in parallel
+    // Use allSettled to handle partial failures gracefully
+    const patchesSummaries = await Promise.allSettled(
+      patches.map((patch, index) => {
+        return step.run(`summarize-patch-${index}`, async () => {
+          try {
+            const result = await generateText({
+              model: "google/gemini-2.0-flash",
+              prompt: `You are a helpful assistant that summarizes code changes.
 
 Desired behavior:
 - Summarize the changes in the patch
@@ -123,50 +112,51 @@ Desired behavior:
 
 Patch:
 ${patch}`,
-						});
+            });
 
-						return result.text;
-					} catch (error) {
-						// For LLM errors (rate limits, API errors, etc.), don't retry
-						// This prevents wasting credits on retries
+            return result.text;
+          } catch (error) {
+            // For LLM errors (rate limits, API errors, etc.), don't retry
+            // This prevents wasting credits on retries
 
-						throw new NonRetriableError(
-							`Failed to generate summary for patch ${index}: ${error instanceof Error ? error.message : String(error)}`,
-							{ cause: error },
-						);
-					}
-				});
-			}),
-		);
+            throw new NonRetriableError(
+              `Failed to generate summary for patch ${index}: ${error instanceof Error ? error.message : String(error)}`,
+              { cause: error }
+            );
+          }
+        });
+      })
+    );
 
-		// Extract successful summaries and handle failures
-		const successfulSummaries = await Promise.all(
-			patchesSummaries.map(async (result, index) => {
-				if (result.status === "fulfilled") {
-					return result.value;
-				}
-				// Return a fallback message for failed summaries
-				console.error(`Failed to summarize patch ${index}:`, result.reason);
-				await db
-					.update(summaries)
-					.set({
-						errorMessage:
-							result.reason instanceof Error
-								? result.reason.message
-								: String(result.reason),
-						status: "failed",
-						patchesInKB: patchesBytes / 1024,
-					})
-					.where(eq(summaries.id, summary.id));
+    // Extract successful summaries and handle failures
+    const successfulSummaries = await Promise.all(
+      patchesSummaries.map(async (result, index) => {
+        if (result.status === "fulfilled") {
+          return result.value;
+        }
+        // Return a fallback message for failed summaries
+        console.error(`Failed to summarize patch ${index}:`, result.reason);
+        await db
+          .update(summaries)
+          .set({
+            errorMessage:
+              result.reason instanceof Error
+                ? result.reason.message
+                : String(result.reason),
+            status: "failed",
+            patchesInKB: patchesBytes / 1024,
+          })
+          .where(eq(summaries.id, summary.id));
 
-				ee.emit("summary", "updated", project.userId);
-				return `[Summary unavailable: ${result.reason instanceof Error ? result.reason.message : String(result.reason)}]`;
-			}),
-		);
+        ee.emit("summary", "updated", project.userId);
+        return `[Summary unavailable: ${result.reason instanceof Error ? result.reason.message : String(result.reason)}]`;
+      })
+    );
 
-		const finalSummary = await generateText({
-			model: "google/gemini-2.5-flash",
-			prompt: `You will be given a list of summaries from a github commit for which you're gonna write a client summary as if you were a expert writer.
+    const finalSummary = await step.run("generate-final-summary", async () =>
+      generateText({
+        model: "google/gemini-2.5-flash",
+        prompt: `You will be given a list of summaries from a github commit for which you're gonna write a client summary as if you were a expert writer.
 
 Expected behavior:
 - Write a non-technical summary of the work delivered
@@ -178,17 +168,23 @@ Expected behavior:
 Text to summarise:
 ${successfulSummaries.join("\n\n")}
 			`,
-		});
+      })
+    );
 
-		// Update the summary with the final generated text
-		await db
-			.update(summaries)
-			.set({
-				summary: finalSummary.text,
-				status: "completed",
-				patchesInKB: patchesBytes / 1024,
-			})
-			.where(eq(summaries.id, summary.id));
-		ee.emit("summary", "updated", project.userId);
-	},
+    // Update the summary with the final generated text
+    await step.run("update-summary", async () =>
+      db
+        .update(summaries)
+        .set({
+          summary: finalSummary.text,
+          status: "completed",
+          patchesInKB: patchesBytes / 1024,
+        })
+        .where(eq(summaries.id, summary.id))
+    );
+
+    await step.run("emit-summary-updated", async () => {
+      ee.emit("summary", "updated", project.userId);
+    });
+  }
 );
