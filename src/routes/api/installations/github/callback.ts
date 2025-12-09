@@ -67,7 +67,7 @@ export const Route = createFileRoute("/api/installations/github/callback")({
 					})
 					.where(eq(githubInstallations.id, installation.id));
 
-				return Response.redirect(`${process.env.BETTER_AUTH_URL}/app`);
+				return Response.redirect(`/app`);
 			},
 		},
 	},
