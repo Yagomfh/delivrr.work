@@ -177,16 +177,6 @@ ${patch}`,
     );
 
     const finalSummary = await step.run("generate-final-summary", async () => {
-      const input = {
-        summariesCount: successfulSummaries.length,
-        totalInputLength: successfulSummaries.join("\n\n").length,
-        summariesPreview: successfulSummaries.map((s, i) => ({
-          index: i,
-          length: s.length,
-          preview: s.substring(0, 100),
-        })),
-      };
-
       const result = await generateText({
         model: "google/gemini-2.5-flash",
         prompt: `You will be given a list of summaries from a github commit for which you're gonna write a client summary as if you were a expert writer.
@@ -203,20 +193,17 @@ ${successfulSummaries.join("\n\n")}
 			`,
       });
 
-      return result;
+      return result.text;
     });
 
     // Update the summary with the final generated text
     await step.run("update-summary", async () => {
-      console.log(
-        "[step:update-summary] Updating summary...",
-        finalSummary.text
-      );
+      console.log("[step:update-summary] Updating summary...", finalSummary);
 
       const result = await db
         .update(summaries)
         .set({
-          summary: finalSummary.text,
+          summary: finalSummary,
           status: "completed",
           patchesInKB: patchesBytes / 1024,
         })
