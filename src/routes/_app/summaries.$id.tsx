@@ -1,4 +1,3 @@
-import { useQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import { formatDistance } from "date-fns";
 import { BadgeCheckIcon, BadgeXIcon, Copy, GitBranch } from "lucide-react";
@@ -11,6 +10,7 @@ import Markdown from "markdown-to-jsx";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { TextSkeletonAnimation } from "@/components/skeletons/text-skeleton-animation";
+import { useSubscription } from "@trpc/tanstack-react-query";
 
 export const Route = createFileRoute("/_app/summaries/$id")({
   component: RouteComponent,
@@ -20,8 +20,8 @@ function RouteComponent() {
   const trpc = useTRPC();
   const { id } = Route.useParams();
   const { id: projectId } = useSelectedProject();
-  const { data: summary, isPending } = useQuery(
-    trpc.summaries.get.queryOptions(
+  const { data: summary } = useSubscription(
+    trpc.summaries.get.subscriptionOptions(
       {
         id: Number(id),
         projectId: projectId as number,
@@ -97,7 +97,7 @@ function RouteComponent() {
           size={"icon"}
           variant={"ghost"}
           className="absolute top-2 right-2"
-          hidden={isPending || summary?.status === "pending"}
+          hidden={!summary || summary?.status === "pending"}
           onClick={() => {
             navigator.clipboard.writeText(summary?.summary ?? "");
             toast.success("Copied to clipboard");
@@ -105,7 +105,7 @@ function RouteComponent() {
         >
           <Copy className="size-4" />
         </Button>
-        {isPending || summary?.status === "pending" ? (
+        {!summary || summary?.status === "pending" ? (
           <TextSkeletonAnimation />
         ) : (
           <Markdown

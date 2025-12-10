@@ -1,6 +1,7 @@
-import { relations, sql } from "drizzle-orm";
+import { relations, SQL, sql } from "drizzle-orm";
 import {
   boolean,
+  customType,
   index,
   integer,
   pgEnum,
@@ -11,6 +12,14 @@ import {
   timestamp,
 } from "drizzle-orm/pg-core";
 import { user } from "./auth-schema";
+
+export const tsvector = customType<{
+  data: string;
+}>({
+  dataType() {
+    return `tsvector`;
+  },
+});
 
 export const projects = pgTable(
   "projects",
@@ -47,6 +56,11 @@ export const summaries = pgTable(
   {
     id: serial("id").primaryKey(),
     summary: text("summary"),
+    summarySearch: tsvector("summary_search")
+      .notNull()
+      .generatedAlwaysAs(
+        (): SQL => sql`to_tsvector('english', ${summaries.summary})`
+      ),
     status: summaryStatusEnum("status").default("pending"),
     senderName: text("sender_name"),
     senderAvatar: text("sender_avatar"),
@@ -59,16 +73,7 @@ export const summaries = pgTable(
     createdAt: timestamp("created_at").defaultNow().notNull(),
     updatedAt: timestamp("updated_at").defaultNow().notNull(),
   },
-  (table) => [
-    index("commit_message_search_index").using(
-      "gin",
-      sql`to_tsvector('english', ${table.headCommitMessage})`
-    ),
-    index("summary_search_index").using(
-      "gin",
-      sql`to_tsvector('english', ${table.summary})`
-    ),
-  ]
+  (table) => [index("idx_summary_search").using("gin", table.summarySearch)]
 );
 
 export const summariesRelations = relations(summaries, ({ one }) => ({

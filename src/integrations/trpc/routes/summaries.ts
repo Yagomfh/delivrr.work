@@ -1,10 +1,9 @@
 import { on } from "node:events";
 import { TRPCError, type TRPCRouterRecord } from "@trpc/server";
-import { and, asc, desc, eq, ilike, inArray, or, sql } from "drizzle-orm";
+import { and, asc, desc, eq, ilike, or, sql } from "drizzle-orm";
 import { z } from "zod";
-import { projects, summaries } from "@/db/schema";
+import { summaries } from "@/db/schema";
 import { ee } from "../events";
-import { protectedProcedure } from "../init";
 import { projectMiddleware } from "../middlewares/project";
 
 export const summariesRouter = {
@@ -14,39 +13,47 @@ export const summariesRouter = {
         id: z.number(),
       })
     )
-    .query(async ({ ctx, input }) => {
-      return ctx.db.query.summaries.findFirst({
+    .subscription(async function* (opts) {
+      const summary = await opts.ctx.db.query.summaries.findFirst({
         where: and(
-          eq(summaries.id, input.id),
-          eq(summaries.projectId, ctx.project.id)
+          eq(summaries.projectId, opts.ctx.project.id),
+          eq(summaries.id, opts.input.id)
         ),
       });
+
+      if (!summary) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Summary not found",
+        });
+      }
+
+      yield summary;
+
+      for await (const [_action, eventUserId] of on(ee, "summary", {
+        // Passing the AbortSignal from the request automatically cancels the event emitter when the request is aborted
+        signal: opts.signal,
+      })) {
+        if (opts.ctx.session.user.id === eventUserId) {
+          // Refetch all summaries for the user when an event occurs
+          const updatedSummary = await opts.ctx.db.query.summaries.findFirst({
+            where: and(
+              eq(summaries.projectId, opts.ctx.project.id),
+              eq(summaries.id, opts.input.id)
+            ),
+          });
+          yield updatedSummary;
+        }
+      }
     }),
-  list: protectedProcedure
+  list: projectMiddleware
     .input(
       z.object({
-        projectId: z.number(),
         search: z.string().optional(),
       })
     )
     .subscription(async function* (opts) {
       const userId = opts.ctx.session.user.id;
-
-      // Get user's project IDs
-      const project = await opts.ctx.db.query.projects.findFirst({
-        columns: { id: true },
-        where: and(
-          eq(projects.userId, userId),
-          eq(projects.id, opts.input.projectId)
-        ),
-      });
-
-      if (!project) {
-        throw new TRPCError({
-          code: "FORBIDDEN",
-          message: "You are not authorized to access this resource",
-        });
-      }
 
       const searchTerm = opts.input.search?.trim();
       const hasSearch = searchTerm && searchTerm.length > 0;
@@ -59,7 +66,8 @@ export const summariesRouter = {
             eq(summaries.projectId, opts.input.projectId),
             hasSearch
               ? or(
-                  sql`to_tsvector('english', ${summaries.headCommitMessage}) @@ websearch_to_tsquery('english', ${searchTerm})`
+                  sql`${summaries.summarySearch} @@ websearch_to_tsquery('english', ${searchTerm})`,
+                  ilike(summaries.headCommitMessage, `%${searchTerm}%`)
                 )
               : undefined
           )
