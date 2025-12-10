@@ -56,11 +56,9 @@ export const summaries = pgTable(
   {
     id: serial("id").primaryKey(),
     summary: text("summary"),
-    summarySearch: tsvector("summary_search")
-      .notNull()
-      .generatedAlwaysAs(
-        (): SQL => sql`to_tsvector('english', ${summaries.summary})`
-      ),
+    summarySearch: tsvector("summary_search").generatedAlwaysAs(
+      (): SQL => sql`to_tsvector('english', ${summaries.summary})`
+    ),
     status: summaryStatusEnum("status").default("pending"),
     senderName: text("sender_name"),
     senderAvatar: text("sender_avatar"),
