@@ -23,7 +23,7 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar";
 import { getInitials } from "@/lib/utils";
-import { useSession } from "@/integrations/better-auth/auth-client";
+import { signOut, useSession } from "@/integrations/better-auth/auth-client";
 
 export function NavUser() {
   const { isMobile } = useSidebar();
@@ -101,7 +101,7 @@ export function NavUser() {
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>
+            <DropdownMenuItem onClick={async () => await signOut()}>
               <LogOut />
               Log out
             </DropdownMenuItem>

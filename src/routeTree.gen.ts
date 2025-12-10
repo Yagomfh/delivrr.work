@@ -13,6 +13,8 @@ import { Route as AuthRouteImport } from './routes/_auth'
 import { Route as AppRouteImport } from './routes/_app'
 import { Route as LandingIndexRouteImport } from './routes/_landing/index'
 import { Route as ApiInngestRouteImport } from './routes/api/inngest'
+import { Route as LandingTermsOfServiceRouteImport } from './routes/_landing/terms-of-service'
+import { Route as LandingPrivacyPolicyRouteImport } from './routes/_landing/privacy-policy'
 import { Route as AuthSignInRouteImport } from './routes/_auth/sign-in'
 import { Route as AppSettingsRouteImport } from './routes/_app/settings'
 import { Route as AppAppRouteImport } from './routes/_app/app'
@@ -43,6 +45,16 @@ const LandingIndexRoute = LandingIndexRouteImport.update({
 const ApiInngestRoute = ApiInngestRouteImport.update({
   id: '/api/inngest',
   path: '/api/inngest',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LandingTermsOfServiceRoute = LandingTermsOfServiceRouteImport.update({
+  id: '/_landing/terms-of-service',
+  path: '/terms-of-service',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LandingPrivacyPolicyRoute = LandingPrivacyPolicyRouteImport.update({
+  id: '/_landing/privacy-policy',
+  path: '/privacy-policy',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthSignInRoute = AuthSignInRouteImport.update({
@@ -117,6 +129,8 @@ export interface FileRoutesByFullPath {
   '/app': typeof AppAppRoute
   '/settings': typeof AppSettingsRoute
   '/sign-in': typeof AuthSignInRoute
+  '/privacy-policy': typeof LandingPrivacyPolicyRoute
+  '/terms-of-service': typeof LandingTermsOfServiceRoute
   '/api/inngest': typeof ApiInngestRoute
   '/': typeof LandingIndexRoute
   '/integrations/$provider': typeof AppIntegrationsProviderRoute
@@ -134,6 +148,8 @@ export interface FileRoutesByTo {
   '/app': typeof AppAppRoute
   '/settings': typeof AppSettingsRoute
   '/sign-in': typeof AuthSignInRoute
+  '/privacy-policy': typeof LandingPrivacyPolicyRoute
+  '/terms-of-service': typeof LandingTermsOfServiceRoute
   '/api/inngest': typeof ApiInngestRoute
   '/': typeof LandingIndexRoute
   '/integrations/$provider': typeof AppIntegrationsProviderRoute
@@ -154,6 +170,8 @@ export interface FileRoutesById {
   '/_app/app': typeof AppAppRoute
   '/_app/settings': typeof AppSettingsRoute
   '/_auth/sign-in': typeof AuthSignInRoute
+  '/_landing/privacy-policy': typeof LandingPrivacyPolicyRoute
+  '/_landing/terms-of-service': typeof LandingTermsOfServiceRoute
   '/api/inngest': typeof ApiInngestRoute
   '/_landing/': typeof LandingIndexRoute
   '/_app/integrations/$provider': typeof AppIntegrationsProviderRoute
@@ -173,6 +191,8 @@ export interface FileRouteTypes {
     | '/app'
     | '/settings'
     | '/sign-in'
+    | '/privacy-policy'
+    | '/terms-of-service'
     | '/api/inngest'
     | '/'
     | '/integrations/$provider'
@@ -190,6 +210,8 @@ export interface FileRouteTypes {
     | '/app'
     | '/settings'
     | '/sign-in'
+    | '/privacy-policy'
+    | '/terms-of-service'
     | '/api/inngest'
     | '/'
     | '/integrations/$provider'
@@ -209,6 +231,8 @@ export interface FileRouteTypes {
     | '/_app/app'
     | '/_app/settings'
     | '/_auth/sign-in'
+    | '/_landing/privacy-policy'
+    | '/_landing/terms-of-service'
     | '/api/inngest'
     | '/_landing/'
     | '/_app/integrations/$provider'
@@ -226,6 +250,8 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   AppRoute: typeof AppRouteWithChildren
   AuthRoute: typeof AuthRouteWithChildren
+  LandingPrivacyPolicyRoute: typeof LandingPrivacyPolicyRoute
+  LandingTermsOfServiceRoute: typeof LandingTermsOfServiceRoute
   ApiInngestRoute: typeof ApiInngestRoute
   LandingIndexRoute: typeof LandingIndexRoute
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
@@ -263,6 +289,20 @@ declare module '@tanstack/react-router' {
       path: '/api/inngest'
       fullPath: '/api/inngest'
       preLoaderRoute: typeof ApiInngestRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_landing/terms-of-service': {
+      id: '/_landing/terms-of-service'
+      path: '/terms-of-service'
+      fullPath: '/terms-of-service'
+      preLoaderRoute: typeof LandingTermsOfServiceRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_landing/privacy-policy': {
+      id: '/_landing/privacy-policy'
+      path: '/privacy-policy'
+      fullPath: '/privacy-policy'
+      preLoaderRoute: typeof LandingPrivacyPolicyRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_auth/sign-in': {
@@ -394,6 +434,8 @@ const AuthRouteWithChildren = AuthRoute._addFileChildren(AuthRouteChildren)
 const rootRouteChildren: RootRouteChildren = {
   AppRoute: AppRouteWithChildren,
   AuthRoute: AuthRouteWithChildren,
+  LandingPrivacyPolicyRoute: LandingPrivacyPolicyRoute,
+  LandingTermsOfServiceRoute: LandingTermsOfServiceRoute,
   ApiInngestRoute: ApiInngestRoute,
   LandingIndexRoute: LandingIndexRoute,
   ApiAuthSplatRoute: ApiAuthSplatRoute,

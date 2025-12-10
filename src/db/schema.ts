@@ -1,4 +1,4 @@
-import { relations } from "drizzle-orm";
+import { relations, sql } from "drizzle-orm";
 import {
   boolean,
   index,
@@ -42,21 +42,34 @@ export const summaryStatusEnum = pgEnum("summary_status", [
   "failed",
 ]);
 
-export const summaries = pgTable("summaries", {
-  id: serial("id").primaryKey(),
-  summary: text("summary"),
-  status: summaryStatusEnum("status").default("pending"),
-  senderName: text("sender_name"),
-  senderAvatar: text("sender_avatar"),
-  headCommitMessage: text("head_commit_message"),
-  headCommitTimestamp: timestamp("head_commit_timestamp"),
-  errorMessage: text("error_message"),
-  projectId: integer("project_id").references(() => projects.id),
-  commitUrl: text("commit_url").notNull(),
-  patchesInKB: real("patches_in_kb"),
-  createdAt: timestamp("created_at").defaultNow().notNull(),
-  updatedAt: timestamp("updated_at").defaultNow().notNull(),
-});
+export const summaries = pgTable(
+  "summaries",
+  {
+    id: serial("id").primaryKey(),
+    summary: text("summary"),
+    status: summaryStatusEnum("status").default("pending"),
+    senderName: text("sender_name"),
+    senderAvatar: text("sender_avatar"),
+    headCommitMessage: text("head_commit_message"),
+    headCommitTimestamp: timestamp("head_commit_timestamp"),
+    errorMessage: text("error_message"),
+    projectId: integer("project_id").references(() => projects.id),
+    commitUrl: text("commit_url").notNull(),
+    patchesInKB: real("patches_in_kb"),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+    updatedAt: timestamp("updated_at").defaultNow().notNull(),
+  },
+  (table) => [
+    index("commit_message_search_index").using(
+      "gin",
+      sql`to_tsvector('english', ${table.headCommitMessage})`
+    ),
+    index("summary_search_index").using(
+      "gin",
+      sql`to_tsvector('english', ${table.summary})`
+    ),
+  ]
+);
 
 export const summariesRelations = relations(summaries, ({ one }) => ({
   project: one(projects, {
