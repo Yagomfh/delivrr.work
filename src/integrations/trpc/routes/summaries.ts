@@ -72,7 +72,7 @@ export const summariesRouter = {
               : undefined
           )
         )
-        .orderBy(asc(summaries.headCommitTimestamp));
+        .orderBy(desc(summaries.headCommitTimestamp));
 
       // Send initial summaries when client connects
       yield initialSummaries;
