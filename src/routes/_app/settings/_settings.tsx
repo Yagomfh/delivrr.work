@@ -12,6 +12,7 @@ import {
 import { ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { PageHeader } from "@/components/headers/page-header";
+import { MainCard } from "@/components/cards/main-card";
 
 export const Route = createFileRoute("/_app/settings/_settings")({
   component: RouteComponent,
@@ -31,7 +32,7 @@ function RouteComponent() {
         title="Settings"
         description="Manage your account settings and set e-mail preferences."
       />
-      <div className={cn("flex gap-4", isMobile && "flex-col")}>
+      <div className={cn("flex gap-4 items-start", isMobile && "flex-col")}>
         {isMobile ? (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -64,7 +65,7 @@ function RouteComponent() {
             </DropdownMenuContent>
           </DropdownMenu>
         ) : (
-          <div className="flex flex-col gap-2 p-2 rounded-md border border-border min-w-48">
+          <MainCard.Root className="flex flex-col gap-2 min-w-48">
             {settingsItems.map((item) => {
               const isActive = location.pathname === item.url;
               return (
@@ -81,9 +82,9 @@ function RouteComponent() {
                 </Link>
               );
             })}
-          </div>
+          </MainCard.Root>
         )}
-        <div className="flex-1 p-2 rounded-md border border-border">
+        <div className="flex-1">
           <Outlet />
         </div>
       </div>

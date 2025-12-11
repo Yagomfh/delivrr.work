@@ -7,6 +7,8 @@ import { Button } from "@/components/ui/button";
 import { useId } from "react";
 import { Spinner } from "@/components/ui/spinner";
 import { useSelectedProject } from "@/hooks/use-project";
+import { MainCard } from "@/components/cards/main-card";
+import { FolderPlus } from "lucide-react";
 import { PageHeader } from "@/components/headers/page-header";
 
 export const Route = createFileRoute("/_app/projects/add")({
@@ -34,7 +36,7 @@ function RouteComponent() {
   );
   const formId = useId();
   return (
-    <div className="flex flex-col gap-8">
+    <div className="flex flex-col gap-6">
       <PageHeader
         title="Add a new project"
         description="Add a new project and connect a GitHub repository to start summarizing your work."
@@ -48,12 +50,30 @@ function RouteComponent() {
           </Button>
         }
       />
-      <ProjectForm
-        id={formId}
-        onSubmit={async (values) => {
-          await createProject.mutateAsync(values);
-        }}
-      />
+      <MainCard.Root className="p-6 flex flex-col gap-4">
+        <MainCard.Header>
+          <div className="flex items-center gap-3">
+            <MainCard.Icon>
+              <FolderPlus className="size-5 text-primary" />
+            </MainCard.Icon>
+            <div className="flex flex-col gap-1">
+              <MainCard.Title>Project Details</MainCard.Title>
+              <MainCard.Description>
+                Configure your project settings
+              </MainCard.Description>
+            </div>
+          </div>
+        </MainCard.Header>
+
+        <MainCard.Content className="flex-col items-stretch w-full">
+          <ProjectForm
+            id={formId}
+            onSubmit={async (values) => {
+              await createProject.mutateAsync(values);
+            }}
+          />
+        </MainCard.Content>
+      </MainCard.Root>
     </div>
   );
 }

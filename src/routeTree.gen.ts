@@ -30,6 +30,7 @@ import { Route as AppProjectsAddRouteImport } from './routes/_app/projects/add'
 import { Route as AppIntegrationsProviderRouteImport } from './routes/_app/integrations/$provider'
 import { Route as ApiInstallationsGithubNewRouteImport } from './routes/api/installations/github/new'
 import { Route as ApiInstallationsGithubCallbackRouteImport } from './routes/api/installations/github/callback'
+import { Route as AppSettingsSettingsSecurityRouteImport } from './routes/_app/settings/_settings.security'
 import { Route as AppSettingsSettingsBillingRouteImport } from './routes/_app/settings/_settings.billing'
 import { Route as AppSettingsSettingsAccountRouteImport } from './routes/_app/settings/_settings.account'
 
@@ -134,6 +135,12 @@ const ApiInstallationsGithubCallbackRoute =
     path: '/api/installations/github/callback',
     getParentRoute: () => rootRouteImport,
   } as any)
+const AppSettingsSettingsSecurityRoute =
+  AppSettingsSettingsSecurityRouteImport.update({
+    id: '/security',
+    path: '/security',
+    getParentRoute: () => AppSettingsSettingsRoute,
+  } as any)
 const AppSettingsSettingsBillingRoute =
   AppSettingsSettingsBillingRouteImport.update({
     id: '/billing',
@@ -165,6 +172,7 @@ export interface FileRoutesByFullPath {
   '/integrations': typeof AppIntegrationsIndexRoute
   '/settings/account': typeof AppSettingsSettingsAccountRoute
   '/settings/billing': typeof AppSettingsSettingsBillingRoute
+  '/settings/security': typeof AppSettingsSettingsSecurityRoute
   '/api/installations/github/callback': typeof ApiInstallationsGithubCallbackRoute
   '/api/installations/github/new': typeof ApiInstallationsGithubNewRoute
 }
@@ -186,6 +194,7 @@ export interface FileRoutesByTo {
   '/integrations': typeof AppIntegrationsIndexRoute
   '/settings/account': typeof AppSettingsSettingsAccountRoute
   '/settings/billing': typeof AppSettingsSettingsBillingRoute
+  '/settings/security': typeof AppSettingsSettingsSecurityRoute
   '/api/installations/github/callback': typeof ApiInstallationsGithubCallbackRoute
   '/api/installations/github/new': typeof ApiInstallationsGithubNewRoute
 }
@@ -211,6 +220,7 @@ export interface FileRoutesById {
   '/_app/integrations/': typeof AppIntegrationsIndexRoute
   '/_app/settings/_settings/account': typeof AppSettingsSettingsAccountRoute
   '/_app/settings/_settings/billing': typeof AppSettingsSettingsBillingRoute
+  '/_app/settings/_settings/security': typeof AppSettingsSettingsSecurityRoute
   '/api/installations/github/callback': typeof ApiInstallationsGithubCallbackRoute
   '/api/installations/github/new': typeof ApiInstallationsGithubNewRoute
 }
@@ -234,6 +244,7 @@ export interface FileRouteTypes {
     | '/integrations'
     | '/settings/account'
     | '/settings/billing'
+    | '/settings/security'
     | '/api/installations/github/callback'
     | '/api/installations/github/new'
   fileRoutesByTo: FileRoutesByTo
@@ -255,6 +266,7 @@ export interface FileRouteTypes {
     | '/integrations'
     | '/settings/account'
     | '/settings/billing'
+    | '/settings/security'
     | '/api/installations/github/callback'
     | '/api/installations/github/new'
   id:
@@ -279,6 +291,7 @@ export interface FileRouteTypes {
     | '/_app/integrations/'
     | '/_app/settings/_settings/account'
     | '/_app/settings/_settings/billing'
+    | '/_app/settings/_settings/security'
     | '/api/installations/github/callback'
     | '/api/installations/github/new'
   fileRoutesById: FileRoutesById
@@ -439,6 +452,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiInstallationsGithubCallbackRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_app/settings/_settings/security': {
+      id: '/_app/settings/_settings/security'
+      path: '/security'
+      fullPath: '/settings/security'
+      preLoaderRoute: typeof AppSettingsSettingsSecurityRouteImport
+      parentRoute: typeof AppSettingsSettingsRoute
+    }
     '/_app/settings/_settings/billing': {
       id: '/_app/settings/_settings/billing'
       path: '/billing'
@@ -459,11 +479,13 @@ declare module '@tanstack/react-router' {
 interface AppSettingsSettingsRouteChildren {
   AppSettingsSettingsAccountRoute: typeof AppSettingsSettingsAccountRoute
   AppSettingsSettingsBillingRoute: typeof AppSettingsSettingsBillingRoute
+  AppSettingsSettingsSecurityRoute: typeof AppSettingsSettingsSecurityRoute
 }
 
 const AppSettingsSettingsRouteChildren: AppSettingsSettingsRouteChildren = {
   AppSettingsSettingsAccountRoute: AppSettingsSettingsAccountRoute,
   AppSettingsSettingsBillingRoute: AppSettingsSettingsBillingRoute,
+  AppSettingsSettingsSecurityRoute: AppSettingsSettingsSecurityRoute,
 }
 
 const AppSettingsSettingsRouteWithChildren =
