@@ -8,6 +8,8 @@
 // You should NOT make any changes in this file as it will be overwritten.
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
+import { createFileRoute } from '@tanstack/react-router'
+
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as AuthRouteImport } from './routes/_auth'
 import { Route as AppRouteImport } from './routes/_app'
@@ -16,18 +18,22 @@ import { Route as ApiInngestRouteImport } from './routes/api/inngest'
 import { Route as LandingTermsOfServiceRouteImport } from './routes/_landing/terms-of-service'
 import { Route as LandingPrivacyPolicyRouteImport } from './routes/_landing/privacy-policy'
 import { Route as AuthSignInRouteImport } from './routes/_auth/sign-in'
-import { Route as AppSettingsRouteImport } from './routes/_app/settings'
+import { Route as AppConfigRouteImport } from './routes/_app/config'
 import { Route as AppAppRouteImport } from './routes/_app/app'
 import { Route as AppIntegrationsIndexRouteImport } from './routes/_app/integrations/index'
 import { Route as ApiWebhooksGithubRouteImport } from './routes/api/webhooks/github'
 import { Route as ApiTrpcSplatRouteImport } from './routes/api/trpc/$'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
 import { Route as AppSummariesIdRouteImport } from './routes/_app/summaries.$id'
-import { Route as AppProjectsSettingsRouteImport } from './routes/_app/projects/settings'
+import { Route as AppSettingsSettingsRouteImport } from './routes/_app/settings/_settings'
 import { Route as AppProjectsAddRouteImport } from './routes/_app/projects/add'
 import { Route as AppIntegrationsProviderRouteImport } from './routes/_app/integrations/$provider'
 import { Route as ApiInstallationsGithubNewRouteImport } from './routes/api/installations/github/new'
 import { Route as ApiInstallationsGithubCallbackRouteImport } from './routes/api/installations/github/callback'
+import { Route as AppSettingsSettingsBillingRouteImport } from './routes/_app/settings/_settings.billing'
+import { Route as AppSettingsSettingsAccountRouteImport } from './routes/_app/settings/_settings.account'
+
+const AppSettingsRouteImport = createFileRoute('/_app/settings')()
 
 const AuthRoute = AuthRouteImport.update({
   id: '/_auth',
@@ -36,6 +42,11 @@ const AuthRoute = AuthRouteImport.update({
 const AppRoute = AppRouteImport.update({
   id: '/_app',
   getParentRoute: () => rootRouteImport,
+} as any)
+const AppSettingsRoute = AppSettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => AppRoute,
 } as any)
 const LandingIndexRoute = LandingIndexRouteImport.update({
   id: '/_landing/',
@@ -62,9 +73,9 @@ const AuthSignInRoute = AuthSignInRouteImport.update({
   path: '/sign-in',
   getParentRoute: () => AuthRoute,
 } as any)
-const AppSettingsRoute = AppSettingsRouteImport.update({
-  id: '/settings',
-  path: '/settings',
+const AppConfigRoute = AppConfigRouteImport.update({
+  id: '/config',
+  path: '/config',
   getParentRoute: () => AppRoute,
 } as any)
 const AppAppRoute = AppAppRouteImport.update({
@@ -97,10 +108,9 @@ const AppSummariesIdRoute = AppSummariesIdRouteImport.update({
   path: '/summaries/$id',
   getParentRoute: () => AppRoute,
 } as any)
-const AppProjectsSettingsRoute = AppProjectsSettingsRouteImport.update({
-  id: '/projects/settings',
-  path: '/projects/settings',
-  getParentRoute: () => AppRoute,
+const AppSettingsSettingsRoute = AppSettingsSettingsRouteImport.update({
+  id: '/_settings',
+  getParentRoute: () => AppSettingsRoute,
 } as any)
 const AppProjectsAddRoute = AppProjectsAddRouteImport.update({
   id: '/projects/add',
@@ -124,10 +134,22 @@ const ApiInstallationsGithubCallbackRoute =
     path: '/api/installations/github/callback',
     getParentRoute: () => rootRouteImport,
   } as any)
+const AppSettingsSettingsBillingRoute =
+  AppSettingsSettingsBillingRouteImport.update({
+    id: '/billing',
+    path: '/billing',
+    getParentRoute: () => AppSettingsSettingsRoute,
+  } as any)
+const AppSettingsSettingsAccountRoute =
+  AppSettingsSettingsAccountRouteImport.update({
+    id: '/account',
+    path: '/account',
+    getParentRoute: () => AppSettingsSettingsRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/app': typeof AppAppRoute
-  '/settings': typeof AppSettingsRoute
+  '/config': typeof AppConfigRoute
   '/sign-in': typeof AuthSignInRoute
   '/privacy-policy': typeof LandingPrivacyPolicyRoute
   '/terms-of-service': typeof LandingTermsOfServiceRoute
@@ -135,18 +157,20 @@ export interface FileRoutesByFullPath {
   '/': typeof LandingIndexRoute
   '/integrations/$provider': typeof AppIntegrationsProviderRoute
   '/projects/add': typeof AppProjectsAddRoute
-  '/projects/settings': typeof AppProjectsSettingsRoute
+  '/settings': typeof AppSettingsSettingsRouteWithChildren
   '/summaries/$id': typeof AppSummariesIdRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/trpc/$': typeof ApiTrpcSplatRoute
   '/api/webhooks/github': typeof ApiWebhooksGithubRoute
   '/integrations': typeof AppIntegrationsIndexRoute
+  '/settings/account': typeof AppSettingsSettingsAccountRoute
+  '/settings/billing': typeof AppSettingsSettingsBillingRoute
   '/api/installations/github/callback': typeof ApiInstallationsGithubCallbackRoute
   '/api/installations/github/new': typeof ApiInstallationsGithubNewRoute
 }
 export interface FileRoutesByTo {
   '/app': typeof AppAppRoute
-  '/settings': typeof AppSettingsRoute
+  '/config': typeof AppConfigRoute
   '/sign-in': typeof AuthSignInRoute
   '/privacy-policy': typeof LandingPrivacyPolicyRoute
   '/terms-of-service': typeof LandingTermsOfServiceRoute
@@ -154,12 +178,14 @@ export interface FileRoutesByTo {
   '/': typeof LandingIndexRoute
   '/integrations/$provider': typeof AppIntegrationsProviderRoute
   '/projects/add': typeof AppProjectsAddRoute
-  '/projects/settings': typeof AppProjectsSettingsRoute
+  '/settings': typeof AppSettingsSettingsRouteWithChildren
   '/summaries/$id': typeof AppSummariesIdRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/trpc/$': typeof ApiTrpcSplatRoute
   '/api/webhooks/github': typeof ApiWebhooksGithubRoute
   '/integrations': typeof AppIntegrationsIndexRoute
+  '/settings/account': typeof AppSettingsSettingsAccountRoute
+  '/settings/billing': typeof AppSettingsSettingsBillingRoute
   '/api/installations/github/callback': typeof ApiInstallationsGithubCallbackRoute
   '/api/installations/github/new': typeof ApiInstallationsGithubNewRoute
 }
@@ -168,7 +194,7 @@ export interface FileRoutesById {
   '/_app': typeof AppRouteWithChildren
   '/_auth': typeof AuthRouteWithChildren
   '/_app/app': typeof AppAppRoute
-  '/_app/settings': typeof AppSettingsRoute
+  '/_app/config': typeof AppConfigRoute
   '/_auth/sign-in': typeof AuthSignInRoute
   '/_landing/privacy-policy': typeof LandingPrivacyPolicyRoute
   '/_landing/terms-of-service': typeof LandingTermsOfServiceRoute
@@ -176,12 +202,15 @@ export interface FileRoutesById {
   '/_landing/': typeof LandingIndexRoute
   '/_app/integrations/$provider': typeof AppIntegrationsProviderRoute
   '/_app/projects/add': typeof AppProjectsAddRoute
-  '/_app/projects/settings': typeof AppProjectsSettingsRoute
+  '/_app/settings': typeof AppSettingsRouteWithChildren
+  '/_app/settings/_settings': typeof AppSettingsSettingsRouteWithChildren
   '/_app/summaries/$id': typeof AppSummariesIdRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/trpc/$': typeof ApiTrpcSplatRoute
   '/api/webhooks/github': typeof ApiWebhooksGithubRoute
   '/_app/integrations/': typeof AppIntegrationsIndexRoute
+  '/_app/settings/_settings/account': typeof AppSettingsSettingsAccountRoute
+  '/_app/settings/_settings/billing': typeof AppSettingsSettingsBillingRoute
   '/api/installations/github/callback': typeof ApiInstallationsGithubCallbackRoute
   '/api/installations/github/new': typeof ApiInstallationsGithubNewRoute
 }
@@ -189,7 +218,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/app'
-    | '/settings'
+    | '/config'
     | '/sign-in'
     | '/privacy-policy'
     | '/terms-of-service'
@@ -197,18 +226,20 @@ export interface FileRouteTypes {
     | '/'
     | '/integrations/$provider'
     | '/projects/add'
-    | '/projects/settings'
+    | '/settings'
     | '/summaries/$id'
     | '/api/auth/$'
     | '/api/trpc/$'
     | '/api/webhooks/github'
     | '/integrations'
+    | '/settings/account'
+    | '/settings/billing'
     | '/api/installations/github/callback'
     | '/api/installations/github/new'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/app'
-    | '/settings'
+    | '/config'
     | '/sign-in'
     | '/privacy-policy'
     | '/terms-of-service'
@@ -216,12 +247,14 @@ export interface FileRouteTypes {
     | '/'
     | '/integrations/$provider'
     | '/projects/add'
-    | '/projects/settings'
+    | '/settings'
     | '/summaries/$id'
     | '/api/auth/$'
     | '/api/trpc/$'
     | '/api/webhooks/github'
     | '/integrations'
+    | '/settings/account'
+    | '/settings/billing'
     | '/api/installations/github/callback'
     | '/api/installations/github/new'
   id:
@@ -229,7 +262,7 @@ export interface FileRouteTypes {
     | '/_app'
     | '/_auth'
     | '/_app/app'
-    | '/_app/settings'
+    | '/_app/config'
     | '/_auth/sign-in'
     | '/_landing/privacy-policy'
     | '/_landing/terms-of-service'
@@ -237,12 +270,15 @@ export interface FileRouteTypes {
     | '/_landing/'
     | '/_app/integrations/$provider'
     | '/_app/projects/add'
-    | '/_app/projects/settings'
+    | '/_app/settings'
+    | '/_app/settings/_settings'
     | '/_app/summaries/$id'
     | '/api/auth/$'
     | '/api/trpc/$'
     | '/api/webhooks/github'
     | '/_app/integrations/'
+    | '/_app/settings/_settings/account'
+    | '/_app/settings/_settings/billing'
     | '/api/installations/github/callback'
     | '/api/installations/github/new'
   fileRoutesById: FileRoutesById
@@ -276,6 +312,13 @@ declare module '@tanstack/react-router' {
       fullPath: ''
       preLoaderRoute: typeof AppRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/_app/settings': {
+      id: '/_app/settings'
+      path: '/settings'
+      fullPath: '/settings'
+      preLoaderRoute: typeof AppSettingsRouteImport
+      parentRoute: typeof AppRoute
     }
     '/_landing/': {
       id: '/_landing/'
@@ -312,11 +355,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthSignInRouteImport
       parentRoute: typeof AuthRoute
     }
-    '/_app/settings': {
-      id: '/_app/settings'
-      path: '/settings'
-      fullPath: '/settings'
-      preLoaderRoute: typeof AppSettingsRouteImport
+    '/_app/config': {
+      id: '/_app/config'
+      path: '/config'
+      fullPath: '/config'
+      preLoaderRoute: typeof AppConfigRouteImport
       parentRoute: typeof AppRoute
     }
     '/_app/app': {
@@ -361,12 +404,12 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppSummariesIdRouteImport
       parentRoute: typeof AppRoute
     }
-    '/_app/projects/settings': {
-      id: '/_app/projects/settings'
-      path: '/projects/settings'
-      fullPath: '/projects/settings'
-      preLoaderRoute: typeof AppProjectsSettingsRouteImport
-      parentRoute: typeof AppRoute
+    '/_app/settings/_settings': {
+      id: '/_app/settings/_settings'
+      path: '/settings'
+      fullPath: '/settings'
+      preLoaderRoute: typeof AppSettingsSettingsRouteImport
+      parentRoute: typeof AppSettingsRoute
     }
     '/_app/projects/add': {
       id: '/_app/projects/add'
@@ -396,25 +439,64 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiInstallationsGithubCallbackRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_app/settings/_settings/billing': {
+      id: '/_app/settings/_settings/billing'
+      path: '/billing'
+      fullPath: '/settings/billing'
+      preLoaderRoute: typeof AppSettingsSettingsBillingRouteImport
+      parentRoute: typeof AppSettingsSettingsRoute
+    }
+    '/_app/settings/_settings/account': {
+      id: '/_app/settings/_settings/account'
+      path: '/account'
+      fullPath: '/settings/account'
+      preLoaderRoute: typeof AppSettingsSettingsAccountRouteImport
+      parentRoute: typeof AppSettingsSettingsRoute
+    }
   }
 }
 
+interface AppSettingsSettingsRouteChildren {
+  AppSettingsSettingsAccountRoute: typeof AppSettingsSettingsAccountRoute
+  AppSettingsSettingsBillingRoute: typeof AppSettingsSettingsBillingRoute
+}
+
+const AppSettingsSettingsRouteChildren: AppSettingsSettingsRouteChildren = {
+  AppSettingsSettingsAccountRoute: AppSettingsSettingsAccountRoute,
+  AppSettingsSettingsBillingRoute: AppSettingsSettingsBillingRoute,
+}
+
+const AppSettingsSettingsRouteWithChildren =
+  AppSettingsSettingsRoute._addFileChildren(AppSettingsSettingsRouteChildren)
+
+interface AppSettingsRouteChildren {
+  AppSettingsSettingsRoute: typeof AppSettingsSettingsRouteWithChildren
+}
+
+const AppSettingsRouteChildren: AppSettingsRouteChildren = {
+  AppSettingsSettingsRoute: AppSettingsSettingsRouteWithChildren,
+}
+
+const AppSettingsRouteWithChildren = AppSettingsRoute._addFileChildren(
+  AppSettingsRouteChildren,
+)
+
 interface AppRouteChildren {
   AppAppRoute: typeof AppAppRoute
-  AppSettingsRoute: typeof AppSettingsRoute
+  AppConfigRoute: typeof AppConfigRoute
   AppIntegrationsProviderRoute: typeof AppIntegrationsProviderRoute
   AppProjectsAddRoute: typeof AppProjectsAddRoute
-  AppProjectsSettingsRoute: typeof AppProjectsSettingsRoute
+  AppSettingsRoute: typeof AppSettingsRouteWithChildren
   AppSummariesIdRoute: typeof AppSummariesIdRoute
   AppIntegrationsIndexRoute: typeof AppIntegrationsIndexRoute
 }
 
 const AppRouteChildren: AppRouteChildren = {
   AppAppRoute: AppAppRoute,
-  AppSettingsRoute: AppSettingsRoute,
+  AppConfigRoute: AppConfigRoute,
   AppIntegrationsProviderRoute: AppIntegrationsProviderRoute,
   AppProjectsAddRoute: AppProjectsAddRoute,
-  AppProjectsSettingsRoute: AppProjectsSettingsRoute,
+  AppSettingsRoute: AppSettingsRouteWithChildren,
   AppSummariesIdRoute: AppSummariesIdRoute,
   AppIntegrationsIndexRoute: AppIntegrationsIndexRoute,
 }

@@ -1,16 +1,16 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { formatDistance } from "date-fns";
-import { BadgeCheckIcon, BadgeXIcon, Copy, GitBranch } from "lucide-react";
+import { Copy, GitBranch } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Badge } from "@/components/ui/badge";
-import { Spinner } from "@/components/ui/spinner";
 import { useSelectedProject } from "@/hooks/use-project";
 import { useTRPC } from "@/integrations/trpc/react";
-import Markdown from "markdown-to-jsx";
+import Markdown from "markdown-to-jsx/react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { TextSkeletonAnimation } from "@/components/skeletons/text-skeleton-animation";
 import { useSubscription } from "@trpc/tanstack-react-query";
+import { StatusBadge } from "@/components/badges/status-badge";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export const Route = createFileRoute("/_app/summaries/$id")({
   component: RouteComponent,
@@ -33,65 +33,48 @@ function RouteComponent() {
   );
   return (
     <div className="flex flex-col gap-4">
-      <div className="flex flex-row gap-2 p-4 justify-between border border-border rounded-md">
-        <div className=" flex-1 flex flex-col justify-center items-start">
-          {summary?.status === "completed" && (
-            <Badge
-              variant="secondary"
-              className="bg-green-500 text-white dark:bg-green-600"
-            >
-              <BadgeCheckIcon />
-              Completed
-            </Badge>
-          )}
-
-          {summary?.status === "failed" && (
-            <Badge
-              variant="secondary"
-              className="bg-red-500 text-white dark:bg-red-600"
-            >
-              <BadgeXIcon />
-              Failed
-            </Badge>
-          )}
-          {summary?.status === "pending" && (
-            <Badge
-              variant="secondary"
-              className="bg-yellow-500 text-white dark:bg-yellow-600"
-            >
-              <Spinner />
-              Generating
-            </Badge>
-          )}
+      {summary === undefined ? (
+        <div className="flex flex-row gap-2 p-4 justify-between border border-border rounded-md">
+          <Skeleton className="w-40 h-4" />
+          <Skeleton className="w-40 h-4" />
+          <Skeleton className="w-40 h-4" />
         </div>
-        <div className=" flex-1 flex flex-row gap-1 items-center justify-start">
-          <GitBranch className="size-4" />
-          <a
-            href={summary?.commitUrl}
-            className="text-sm font-medium"
-            target="_blank"
-          >
-            {summary?.headCommitMessage}
-          </a>
+      ) : (
+        <div className="flex flex-row gap-2 p-4 justify-between border border-border rounded-md">
+          <StatusBadge status={summary?.status} />
+          <div className=" flex-1 flex flex-row gap-2 items-start justify-center">
+            <div className="py-1">
+              <GitBranch className="size-3" />
+            </div>
+            <a
+              href={summary?.commitUrl}
+              className="text-sm font-medium"
+              target="_blank"
+            >
+              {summary?.headCommitMessage}
+            </a>
+          </div>
+          <div className=" flex-1 flex flex-row gap-2 items-center justify-end">
+            <p className="text-sm text-muted-foreground">
+              {formatDistance(
+                new Date(summary?.headCommitTimestamp ?? 0),
+                new Date(),
+                { addSuffix: true }
+              )}{" "}
+              by {summary?.senderName}
+            </p>
+            <Avatar>
+              <AvatarImage
+                src={summary?.senderAvatar ?? undefined}
+                alt={summary?.senderName ?? undefined}
+              />
+              <AvatarFallback>
+                {summary?.senderName?.slice(0, 2)}
+              </AvatarFallback>
+            </Avatar>
+          </div>
         </div>
-        <div className=" flex-1 flex flex-row gap-2 items-center justify-end">
-          <p className="text-sm text-muted-foreground">
-            {formatDistance(
-              new Date(summary?.headCommitTimestamp ?? 0),
-              new Date(),
-              { addSuffix: true }
-            )}{" "}
-            by {summary?.senderName}
-          </p>
-          <Avatar>
-            <AvatarImage
-              src={summary?.senderAvatar ?? undefined}
-              alt={summary?.senderName ?? undefined}
-            />
-            <AvatarFallback>{summary?.senderName?.slice(0, 2)}</AvatarFallback>
-          </Avatar>
-        </div>
-      </div>
+      )}
       <div className="markdown-content p-4 border border-border rounded-md relative">
         <Button
           size={"icon"}

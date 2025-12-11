@@ -7,49 +7,53 @@ import { Button } from "@/components/ui/button";
 import { useId } from "react";
 import { Spinner } from "@/components/ui/spinner";
 import { useSelectedProject } from "@/hooks/use-project";
+import { PageHeader } from "@/components/headers/page-header";
 
 export const Route = createFileRoute("/_app/projects/add")({
-	component: RouteComponent,
+  component: RouteComponent,
 });
 
 function RouteComponent() {
-	const navigate = Route.useNavigate();
-	const trpc = useTRPC();
-	const queryClient = useQueryClient();
-	const {setSelected} = useSelectedProject();
-	const createProject = useMutation(
-		trpc.projects.create.mutationOptions({
-			onSuccess: ([data]) => {
-				queryClient.invalidateQueries({
-					queryKey: trpc.projects.list.queryKey(),
-				})
-				toast.success("Project created successfully");
-				navigate({ to: "/app" })
-				setTimeout(() => {
-					setSelected(data.id);
-				}, 500);
-			},
-		}),
-	);
-	const formId = useId();
-	return (
-		<div className="flex flex-col gap-8">
-			<div className="flex justify-between items-center">
-
-			<div className="flex flex-col gap-2">
-				<h1 className="text-2xl font-bold">Add a new project</h1>
-				<p className="text-sm text-muted-foreground">
-					Add a new project and connect a GitHub repository to start summarizing your work.
-				</p>
-			</div>
-			<Button type="submit" form={formId} disabled={createProject.isPending}>{createProject.isPending && <Spinner />} Create</Button>
-			</div>
-			<ProjectForm
-				id={formId}
-				onSubmit={async (values) => {
-					await createProject.mutateAsync(values);
-				}}
-			/>
-		</div>
-	);
+  const navigate = Route.useNavigate();
+  const trpc = useTRPC();
+  const queryClient = useQueryClient();
+  const { setSelected } = useSelectedProject();
+  const createProject = useMutation(
+    trpc.projects.create.mutationOptions({
+      onSuccess: ([data]) => {
+        queryClient.invalidateQueries({
+          queryKey: trpc.projects.list.queryKey(),
+        });
+        toast.success("Project created successfully");
+        navigate({ to: "/app" });
+        setTimeout(() => {
+          setSelected(data.id);
+        }, 500);
+      },
+    })
+  );
+  const formId = useId();
+  return (
+    <div className="flex flex-col gap-8">
+      <PageHeader
+        title="Add a new project"
+        description="Add a new project and connect a GitHub repository to start summarizing your work."
+        action={
+          <Button
+            type="submit"
+            form={formId}
+            disabled={createProject.isPending}
+          >
+            {createProject.isPending && <Spinner />} Create
+          </Button>
+        }
+      />
+      <ProjectForm
+        id={formId}
+        onSubmit={async (values) => {
+          await createProject.mutateAsync(values);
+        }}
+      />
+    </div>
+  );
 }

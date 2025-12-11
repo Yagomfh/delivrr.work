@@ -42,8 +42,8 @@ export const sidebarItems: NavGroup[] = [
         icon: LayoutDashboard,
       },
       {
-        title: "Settings",
-        url: "/settings",
+        title: "Configuration",
+        url: "/config",
         icon: Settings,
       },
       {

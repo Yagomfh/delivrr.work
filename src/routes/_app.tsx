@@ -67,12 +67,12 @@ function RouteComponent() {
               <SearchDialog />
             </div>
             <div className="flex items-center gap-2">
-              <NotificationsPopover />
+              {/* <NotificationsPopover /> */}
               <ThemeSwitcher />
             </div>
           </div>
         </header>
-        <div className="h-full p-4 md:p-6">
+        <div className="h-full p-4">
           <Outlet />
         </div>
       </SidebarInset>

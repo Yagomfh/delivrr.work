@@ -1,16 +1,21 @@
 import { Link } from "@tanstack/react-router";
 import { Badge } from "../ui/badge";
-import { BadgeCheckIcon, BadgeXIcon, Check, GitBranch, X } from "lucide-react";
+import { Check, GitBranch, X } from "lucide-react";
 import { Spinner } from "../ui/spinner";
 import { TextSkeletonAnimation } from "../skeletons/text-skeleton-animation";
 import { formatDistance } from "date-fns";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { ExtractAsyncIterableValue, trpcOut } from "@/integrations/trpc/types";
 import { cn } from "@/lib/utils";
+import Markdown from "markdown-to-jsx/react";
 
 type SummaryListType = ExtractAsyncIterableValue<trpcOut["summaries"]["list"]>;
 
-export function SummaryCard({ summary }: { summary: SummaryListType[number] }) {
+export function SummaryCard({
+  summary,
+}: {
+  summary: SummaryListType["data"][number];
+}) {
   return (
     <Link
       to={"/summaries/$id"}
@@ -19,8 +24,10 @@ export function SummaryCard({ summary }: { summary: SummaryListType[number] }) {
       className="flex flex-col gap-3 border border-border rounded-md p-4 cursor-pointer hover:bg-muted/50 transition-colors group"
     >
       <div className="flex items-start justify-between gap-2 border-b border-border pb-2">
-        <div className="flex-1 min-w-0 flex items-center gap-2">
-          <GitBranch className="size-3" />
+        <div className="flex-1 min-w-0 flex items-start gap-2">
+          <div className="py-1">
+            <GitBranch className="size-3" />
+          </div>
           <h2 className="text-sm font-medium text-foreground line-clamp-2 group-hover:text-foreground/80 transition-colors">
             {summary.headCommitMessage}
           </h2>
@@ -55,16 +62,18 @@ export function SummaryCard({ summary }: { summary: SummaryListType[number] }) {
       <div className="flex-1 flex items-start">
         {summary.status === "pending" ? (
           <TextSkeletonAnimation />
+        ) : summary.status === "completed" ? (
+          <div className="text-sm line-clamp-4">
+            <Markdown>{summary.summary}</Markdown>
+          </div>
         ) : (
           <p
             className={cn(
               "text-sm text-muted-foreground line-clamp-4",
-              summary.status === "failed" ? "text-red-400" : "text-foreground"
+              "text-red-400"
             )}
           >
-            {summary.status === "completed"
-              ? summary.summary
-              : summary.errorMessage}
+            {summary.errorMessage}
           </p>
         )}
       </div>

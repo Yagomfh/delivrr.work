@@ -1,10 +1,4 @@
-import {
-  EllipsisVertical,
-  CircleUser,
-  CreditCard,
-  LogOut,
-  Bell,
-} from "lucide-react";
+import { EllipsisVertical, CircleUser, CreditCard, LogOut } from "lucide-react";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
@@ -24,11 +18,11 @@ import {
 } from "@/components/ui/sidebar";
 import { getInitials } from "@/lib/utils";
 import { signOut, useSession } from "@/integrations/better-auth/auth-client";
+import { Link } from "@tanstack/react-router";
 
 export function NavUser() {
   const { isMobile } = useSidebar();
   const { data } = useSession();
-
   return (
     <SidebarMenu>
       <SidebarMenuItem>
@@ -87,18 +81,23 @@ export function NavUser() {
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
-              <DropdownMenuItem>
-                <CircleUser />
-                Account
+              <DropdownMenuItem asChild>
+                <Link to="/settings/account">
+                  <CircleUser />
+                  Account
+                </Link>
               </DropdownMenuItem>
-              <DropdownMenuItem>
-                <CreditCard />
-                Billing
+
+              <DropdownMenuItem asChild>
+                <Link to="/settings/billing">
+                  <CreditCard />
+                  Billing
+                </Link>
               </DropdownMenuItem>
-              <DropdownMenuItem>
+              {/* <DropdownMenuItem>
                 <Bell />
                 Notifications
-              </DropdownMenuItem>
+              </DropdownMenuItem> */}
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuItem onClick={async () => await signOut()}>
