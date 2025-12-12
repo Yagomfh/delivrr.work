@@ -1,7 +1,9 @@
-import { PlusCircleIcon, MailIcon, ChevronRight } from "lucide-react";
-
-import { Button } from "@/components/ui/button";
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import { ChevronRight } from "lucide-react";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -20,7 +22,10 @@ import {
   SidebarMenuSubItem,
   useSidebar,
 } from "@/components/ui/sidebar";
-import { type NavGroup, type NavMainItem } from "@/navigation/sidebar/sidebar-items";
+import {
+  type NavGroup,
+  type NavMainItem,
+} from "@/navigation/sidebar/sidebar-items";
 import { Link, useLocation } from "@tanstack/react-router";
 
 interface NavMainProps {
@@ -28,20 +33,29 @@ interface NavMainProps {
 }
 
 const IsComingSoon = () => (
-  <span className="ml-auto rounded-md bg-gray-200 px-2 py-1 text-xs dark:text-gray-800">Soon</span>
+  <span className="ml-auto rounded-md bg-gray-200 px-2 py-1 text-xs dark:text-gray-800">
+    Soon
+  </span>
 );
 
 const NavItemExpanded = ({
   item,
   isActive,
   isSubmenuOpen,
+  onLinkClick,
 }: {
   item: NavMainItem;
   isActive: (url: string, subItems?: NavMainItem["subItems"]) => boolean;
   isSubmenuOpen: (subItems?: NavMainItem["subItems"]) => boolean;
+  onLinkClick: () => void;
 }) => {
   return (
-    <Collapsible key={item.title} asChild defaultOpen={isSubmenuOpen(item.subItems)} className="group/collapsible">
+    <Collapsible
+      key={item.title}
+      asChild
+      defaultOpen={isSubmenuOpen(item.subItems)}
+      className="group/collapsible"
+    >
       <SidebarMenuItem>
         <CollapsibleTrigger asChild>
           {item.subItems ? (
@@ -62,7 +76,7 @@ const NavItemExpanded = ({
               isActive={isActive(item.url)}
               tooltip={item.title}
             >
-              <Link to={item.url}>
+              <Link to={item.url} onClick={onLinkClick}>
                 {item.icon && <item.icon />}
                 <span>{item.title}</span>
                 {item.comingSoon && <IsComingSoon />}
@@ -75,8 +89,12 @@ const NavItemExpanded = ({
             <SidebarMenuSub>
               {item.subItems.map((subItem) => (
                 <SidebarMenuSubItem key={subItem.title}>
-                  <SidebarMenuSubButton aria-disabled={subItem.comingSoon} isActive={isActive(subItem.url)} asChild>
-                    <Link to={subItem.url}>
+                  <SidebarMenuSubButton
+                    aria-disabled={subItem.comingSoon}
+                    isActive={isActive(subItem.url)}
+                    asChild
+                  >
+                    <Link to={subItem.url} onClick={onLinkClick}>
                       {subItem.icon && <subItem.icon />}
                       <span>{subItem.title}</span>
                       {subItem.comingSoon && <IsComingSoon />}
@@ -95,9 +113,11 @@ const NavItemExpanded = ({
 const NavItemCollapsed = ({
   item,
   isActive,
+  onLinkClick,
 }: {
   item: NavMainItem;
   isActive: (url: string, subItems?: NavMainItem["subItems"]) => boolean;
+  onLinkClick: () => void;
 }) => {
   return (
     <SidebarMenuItem key={item.title}>
@@ -113,7 +133,11 @@ const NavItemCollapsed = ({
             <ChevronRight />
           </SidebarMenuButton>
         </DropdownMenuTrigger>
-        <DropdownMenuContent className="w-50 space-y-1" side="right" align="start">
+        <DropdownMenuContent
+          className="w-50 space-y-1"
+          side="right"
+          align="start"
+        >
           {item.subItems?.map((subItem) => (
             <DropdownMenuItem key={subItem.title} asChild>
               <SidebarMenuSubButton
@@ -123,8 +147,10 @@ const NavItemCollapsed = ({
                 aria-disabled={subItem.comingSoon}
                 isActive={isActive(subItem.url)}
               >
-                <Link to={subItem.url}>
-                  {subItem.icon && <subItem.icon className="[&>svg]:text-sidebar-foreground" />}
+                <Link to={subItem.url} onClick={onLinkClick}>
+                  {subItem.icon && (
+                    <subItem.icon className="[&>svg]:text-sidebar-foreground" />
+                  )}
                   <span>{subItem.title}</span>
                   {subItem.comingSoon && <IsComingSoon />}
                 </Link>
@@ -139,7 +165,7 @@ const NavItemCollapsed = ({
 
 export function NavMain({ items }: NavMainProps) {
   const location = useLocation();
-  const { state, isMobile } = useSidebar();
+  const { state, isMobile, setOpenMobile } = useSidebar();
 
   const isItemActive = (url: string, subItems?: NavMainItem["subItems"]) => {
     if (subItems?.length) {
@@ -149,12 +175,19 @@ export function NavMain({ items }: NavMainProps) {
   };
 
   const isSubmenuOpen = (subItems?: NavMainItem["subItems"]) => {
-    return subItems?.some((sub) => location.pathname.startsWith(sub.url)) ?? false;
+    return (
+      subItems?.some((sub) => location.pathname.startsWith(sub.url)) ?? false
+    );
+  };
+
+  const handleLinkClick = () => {
+    if (isMobile) {
+      setOpenMobile(false);
+    }
   };
 
   return (
     <div>
-      
       {items.map((group) => (
         <SidebarGroup key={group.id}>
           {group.label && <SidebarGroupLabel>{group.label}</SidebarGroupLabel>}
@@ -172,7 +205,7 @@ export function NavMain({ items }: NavMainProps) {
                           tooltip={item.title}
                           isActive={isItemActive(item.url)}
                         >
-                          <Link to={item.url}>
+                          <Link to={item.url} onClick={handleLinkClick}>
                             {item.icon && <item.icon />}
                             <span>{item.title}</span>
                           </Link>
@@ -181,11 +214,24 @@ export function NavMain({ items }: NavMainProps) {
                     );
                   }
                   // Otherwise, render the dropdown as before
-                  return <NavItemCollapsed key={item.title} item={item} isActive={isItemActive} />;
+                  return (
+                    <NavItemCollapsed
+                      key={item.title}
+                      item={item}
+                      isActive={isItemActive}
+                      onLinkClick={handleLinkClick}
+                    />
+                  );
                 }
                 // Expanded view
                 return (
-                  <NavItemExpanded key={item.title} item={item} isActive={isItemActive} isSubmenuOpen={isSubmenuOpen} />
+                  <NavItemExpanded
+                    key={item.title}
+                    item={item}
+                    isActive={isItemActive}
+                    isSubmenuOpen={isSubmenuOpen}
+                    onLinkClick={handleLinkClick}
+                  />
                 );
               })}
             </SidebarMenu>

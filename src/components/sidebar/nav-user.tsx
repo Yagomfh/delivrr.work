@@ -21,8 +21,14 @@ import { signOut, useSession } from "@/integrations/better-auth/auth-client";
 import { Link } from "@tanstack/react-router";
 
 export function NavUser() {
-  const { isMobile } = useSidebar();
+  const { isMobile, setOpenMobile } = useSidebar();
   const { data } = useSession();
+
+  const handleLinkClick = () => {
+    if (isMobile) {
+      setOpenMobile(false);
+    }
+  };
   return (
     <SidebarMenu>
       <SidebarMenuItem>
@@ -82,14 +88,14 @@ export function NavUser() {
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
               <DropdownMenuItem asChild>
-                <Link to="/settings/account">
+                <Link to="/settings/account" onClick={handleLinkClick}>
                   <CircleUser />
                   Account
                 </Link>
               </DropdownMenuItem>
 
               <DropdownMenuItem asChild>
-                <Link to="/settings/billing">
+                <Link to="/settings/billing" onClick={handleLinkClick}>
                   <CreditCard />
                   Billing
                 </Link>

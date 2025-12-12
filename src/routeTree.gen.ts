@@ -11,6 +11,7 @@
 import { createFileRoute } from '@tanstack/react-router'
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as LandingRouteImport } from './routes/_landing'
 import { Route as AuthRouteImport } from './routes/_auth'
 import { Route as AppRouteImport } from './routes/_app'
 import { Route as LandingIndexRouteImport } from './routes/_landing/index'
@@ -27,7 +28,6 @@ import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
 import { Route as AppSummariesIdRouteImport } from './routes/_app/summaries.$id'
 import { Route as AppSettingsSettingsRouteImport } from './routes/_app/settings/_settings'
 import { Route as AppProjectsAddRouteImport } from './routes/_app/projects/add'
-import { Route as AppIntegrationsProviderRouteImport } from './routes/_app/integrations/$provider'
 import { Route as ApiInstallationsGithubNewRouteImport } from './routes/api/installations/github/new'
 import { Route as ApiInstallationsGithubCallbackRouteImport } from './routes/api/installations/github/callback'
 import { Route as AppSettingsSettingsSecurityRouteImport } from './routes/_app/settings/_settings.security'
@@ -36,6 +36,10 @@ import { Route as AppSettingsSettingsAccountRouteImport } from './routes/_app/se
 
 const AppSettingsRouteImport = createFileRoute('/_app/settings')()
 
+const LandingRoute = LandingRouteImport.update({
+  id: '/_landing',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthRoute = AuthRouteImport.update({
   id: '/_auth',
   getParentRoute: () => rootRouteImport,
@@ -50,9 +54,9 @@ const AppSettingsRoute = AppSettingsRouteImport.update({
   getParentRoute: () => AppRoute,
 } as any)
 const LandingIndexRoute = LandingIndexRouteImport.update({
-  id: '/_landing/',
+  id: '/',
   path: '/',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => LandingRoute,
 } as any)
 const ApiInngestRoute = ApiInngestRouteImport.update({
   id: '/api/inngest',
@@ -60,14 +64,14 @@ const ApiInngestRoute = ApiInngestRouteImport.update({
   getParentRoute: () => rootRouteImport,
 } as any)
 const LandingTermsOfServiceRoute = LandingTermsOfServiceRouteImport.update({
-  id: '/_landing/terms-of-service',
+  id: '/terms-of-service',
   path: '/terms-of-service',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => LandingRoute,
 } as any)
 const LandingPrivacyPolicyRoute = LandingPrivacyPolicyRouteImport.update({
-  id: '/_landing/privacy-policy',
+  id: '/privacy-policy',
   path: '/privacy-policy',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => LandingRoute,
 } as any)
 const AuthSignInRoute = AuthSignInRouteImport.update({
   id: '/sign-in',
@@ -118,11 +122,6 @@ const AppProjectsAddRoute = AppProjectsAddRouteImport.update({
   path: '/projects/add',
   getParentRoute: () => AppRoute,
 } as any)
-const AppIntegrationsProviderRoute = AppIntegrationsProviderRouteImport.update({
-  id: '/integrations/$provider',
-  path: '/integrations/$provider',
-  getParentRoute: () => AppRoute,
-} as any)
 const ApiInstallationsGithubNewRoute =
   ApiInstallationsGithubNewRouteImport.update({
     id: '/api/installations/github/new',
@@ -162,7 +161,6 @@ export interface FileRoutesByFullPath {
   '/terms-of-service': typeof LandingTermsOfServiceRoute
   '/api/inngest': typeof ApiInngestRoute
   '/': typeof LandingIndexRoute
-  '/integrations/$provider': typeof AppIntegrationsProviderRoute
   '/projects/add': typeof AppProjectsAddRoute
   '/settings': typeof AppSettingsSettingsRouteWithChildren
   '/summaries/$id': typeof AppSummariesIdRoute
@@ -184,7 +182,6 @@ export interface FileRoutesByTo {
   '/terms-of-service': typeof LandingTermsOfServiceRoute
   '/api/inngest': typeof ApiInngestRoute
   '/': typeof LandingIndexRoute
-  '/integrations/$provider': typeof AppIntegrationsProviderRoute
   '/projects/add': typeof AppProjectsAddRoute
   '/settings': typeof AppSettingsSettingsRouteWithChildren
   '/summaries/$id': typeof AppSummariesIdRoute
@@ -202,6 +199,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/_app': typeof AppRouteWithChildren
   '/_auth': typeof AuthRouteWithChildren
+  '/_landing': typeof LandingRouteWithChildren
   '/_app/app': typeof AppAppRoute
   '/_app/config': typeof AppConfigRoute
   '/_auth/sign-in': typeof AuthSignInRoute
@@ -209,7 +207,6 @@ export interface FileRoutesById {
   '/_landing/terms-of-service': typeof LandingTermsOfServiceRoute
   '/api/inngest': typeof ApiInngestRoute
   '/_landing/': typeof LandingIndexRoute
-  '/_app/integrations/$provider': typeof AppIntegrationsProviderRoute
   '/_app/projects/add': typeof AppProjectsAddRoute
   '/_app/settings': typeof AppSettingsRouteWithChildren
   '/_app/settings/_settings': typeof AppSettingsSettingsRouteWithChildren
@@ -234,7 +231,6 @@ export interface FileRouteTypes {
     | '/terms-of-service'
     | '/api/inngest'
     | '/'
-    | '/integrations/$provider'
     | '/projects/add'
     | '/settings'
     | '/summaries/$id'
@@ -256,7 +252,6 @@ export interface FileRouteTypes {
     | '/terms-of-service'
     | '/api/inngest'
     | '/'
-    | '/integrations/$provider'
     | '/projects/add'
     | '/settings'
     | '/summaries/$id'
@@ -273,6 +268,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/_app'
     | '/_auth'
+    | '/_landing'
     | '/_app/app'
     | '/_app/config'
     | '/_auth/sign-in'
@@ -280,7 +276,6 @@ export interface FileRouteTypes {
     | '/_landing/terms-of-service'
     | '/api/inngest'
     | '/_landing/'
-    | '/_app/integrations/$provider'
     | '/_app/projects/add'
     | '/_app/settings'
     | '/_app/settings/_settings'
@@ -299,10 +294,8 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   AppRoute: typeof AppRouteWithChildren
   AuthRoute: typeof AuthRouteWithChildren
-  LandingPrivacyPolicyRoute: typeof LandingPrivacyPolicyRoute
-  LandingTermsOfServiceRoute: typeof LandingTermsOfServiceRoute
+  LandingRoute: typeof LandingRouteWithChildren
   ApiInngestRoute: typeof ApiInngestRoute
-  LandingIndexRoute: typeof LandingIndexRoute
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
   ApiTrpcSplatRoute: typeof ApiTrpcSplatRoute
   ApiWebhooksGithubRoute: typeof ApiWebhooksGithubRoute
@@ -312,6 +305,13 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/_landing': {
+      id: '/_landing'
+      path: ''
+      fullPath: ''
+      preLoaderRoute: typeof LandingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_auth': {
       id: '/_auth'
       path: ''
@@ -338,7 +338,7 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof LandingIndexRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof LandingRoute
     }
     '/api/inngest': {
       id: '/api/inngest'
@@ -352,14 +352,14 @@ declare module '@tanstack/react-router' {
       path: '/terms-of-service'
       fullPath: '/terms-of-service'
       preLoaderRoute: typeof LandingTermsOfServiceRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof LandingRoute
     }
     '/_landing/privacy-policy': {
       id: '/_landing/privacy-policy'
       path: '/privacy-policy'
       fullPath: '/privacy-policy'
       preLoaderRoute: typeof LandingPrivacyPolicyRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof LandingRoute
     }
     '/_auth/sign-in': {
       id: '/_auth/sign-in'
@@ -431,13 +431,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppProjectsAddRouteImport
       parentRoute: typeof AppRoute
     }
-    '/_app/integrations/$provider': {
-      id: '/_app/integrations/$provider'
-      path: '/integrations/$provider'
-      fullPath: '/integrations/$provider'
-      preLoaderRoute: typeof AppIntegrationsProviderRouteImport
-      parentRoute: typeof AppRoute
-    }
     '/api/installations/github/new': {
       id: '/api/installations/github/new'
       path: '/api/installations/github/new'
@@ -506,7 +499,6 @@ const AppSettingsRouteWithChildren = AppSettingsRoute._addFileChildren(
 interface AppRouteChildren {
   AppAppRoute: typeof AppAppRoute
   AppConfigRoute: typeof AppConfigRoute
-  AppIntegrationsProviderRoute: typeof AppIntegrationsProviderRoute
   AppProjectsAddRoute: typeof AppProjectsAddRoute
   AppSettingsRoute: typeof AppSettingsRouteWithChildren
   AppSummariesIdRoute: typeof AppSummariesIdRoute
@@ -516,7 +508,6 @@ interface AppRouteChildren {
 const AppRouteChildren: AppRouteChildren = {
   AppAppRoute: AppAppRoute,
   AppConfigRoute: AppConfigRoute,
-  AppIntegrationsProviderRoute: AppIntegrationsProviderRoute,
   AppProjectsAddRoute: AppProjectsAddRoute,
   AppSettingsRoute: AppSettingsRouteWithChildren,
   AppSummariesIdRoute: AppSummariesIdRoute,
@@ -535,13 +526,26 @@ const AuthRouteChildren: AuthRouteChildren = {
 
 const AuthRouteWithChildren = AuthRoute._addFileChildren(AuthRouteChildren)
 
+interface LandingRouteChildren {
+  LandingPrivacyPolicyRoute: typeof LandingPrivacyPolicyRoute
+  LandingTermsOfServiceRoute: typeof LandingTermsOfServiceRoute
+  LandingIndexRoute: typeof LandingIndexRoute
+}
+
+const LandingRouteChildren: LandingRouteChildren = {
+  LandingPrivacyPolicyRoute: LandingPrivacyPolicyRoute,
+  LandingTermsOfServiceRoute: LandingTermsOfServiceRoute,
+  LandingIndexRoute: LandingIndexRoute,
+}
+
+const LandingRouteWithChildren =
+  LandingRoute._addFileChildren(LandingRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   AppRoute: AppRouteWithChildren,
   AuthRoute: AuthRouteWithChildren,
-  LandingPrivacyPolicyRoute: LandingPrivacyPolicyRoute,
-  LandingTermsOfServiceRoute: LandingTermsOfServiceRoute,
+  LandingRoute: LandingRouteWithChildren,
   ApiInngestRoute: ApiInngestRoute,
-  LandingIndexRoute: LandingIndexRoute,
   ApiAuthSplatRoute: ApiAuthSplatRoute,
   ApiTrpcSplatRoute: ApiTrpcSplatRoute,
   ApiWebhooksGithubRoute: ApiWebhooksGithubRoute,

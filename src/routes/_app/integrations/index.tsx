@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
+import { useId, useState } from "react";
 import { MainCard } from "@/components/cards/main-card";
 import { Switch } from "@/components/ui/switch";
 import { Input } from "@/components/ui/input";
@@ -7,19 +7,58 @@ import { Badge } from "@/components/ui/badge";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
-import { Mail, MessageSquare, Zap, CheckCircle2, LogIn } from "lucide-react";
+import {
+  Mail,
+  MessageSquare,
+  Zap,
+  CheckCircle2,
+  LogIn,
+  RefreshCcw,
+} from "lucide-react";
 import { PageHeader } from "@/components/headers/page-header";
+import { cn } from "@/lib/utils";
+import { useTRPC } from "@/integrations/trpc/react";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { useSubscription } from "@trpc/tanstack-react-query";
+import { useSelectedProject } from "@/hooks/use-project";
+import { Spinner } from "@/components/ui/spinner";
+import {
+  EmailIntegrationForm,
+  EmailIntegrationFormValues,
+} from "@/components/forms/email-integration-form";
+import { signIn } from "@/integrations/better-auth/auth-client";
 
 export const Route = createFileRoute("/_app/integrations/")({
   component: RouteComponent,
 });
 
 function RouteComponent() {
+  const trpc = useTRPC();
+  const { id: projectId } = useSelectedProject();
   const [emailEnabled, setEmailEnabled] = useState(false);
   const [slackEnabled, setSlackEnabled] = useState(false);
   const [emailFrom, setEmailFrom] = useState("");
   const [emailCc, setEmailCc] = useState("");
   const [slackConnected, setSlackConnected] = useState(false);
+  const [isEmailFormDirty, setIsEmailFormDirty] = useState(false);
+
+  const integrations = useSubscription(
+    trpc.integrations.list.subscriptionOptions(
+      { projectId: projectId as number },
+      { enabled: !!projectId }
+    )
+  );
+
+  const switchIntegration = useMutation(
+    trpc.integrations.switch.mutationOptions({})
+  );
+
+  const updateIntegration = useMutation(
+    trpc.integrations.update.mutationOptions({})
+  );
+
+  const emailIntegrationFormId = useId();
+  const slackIntegrationFormId = useId();
 
   return (
     <div className="flex flex-col gap-6">
@@ -29,11 +68,16 @@ function RouteComponent() {
       />
 
       {/* Email Integration */}
-      <MainCard.Root className="p-6 flex flex-col gap-4">
+      <MainCard.Root
+        className={cn(
+          "p-6 flex flex-col gap-4",
+          integrations.data?.email?.enabled && "border-primary/20 bg-primary/5"
+        )}
+      >
         <MainCard.Header>
           <div className="flex items-center gap-3">
-            <MainCard.Icon>
-              <Mail className="size-5 text-primary" />
+            <MainCard.Icon className="shrink-0">
+              <Mail className="size-5 sm:size-5 text-primary" />
             </MainCard.Icon>
             <div className="flex flex-col gap-1">
               <MainCard.Title>Email Integration</MainCard.Title>
@@ -42,15 +86,6 @@ function RouteComponent() {
               </MainCard.Description>
             </div>
           </div>
-          {emailEnabled && (
-            <Badge
-              variant="default"
-              className="bg-primary/10 text-primary border-primary/20"
-            >
-              <CheckCircle2 className="size-3 mr-1" />
-              Active
-            </Badge>
-          )}
         </MainCard.Header>
 
         <MainCard.Content className="flex-col gap-4">
@@ -64,69 +99,81 @@ function RouteComponent() {
                 specified email address
               </p>
             </div>
-            <Switch
-              id="email-toggle"
-              checked={emailEnabled}
-              onCheckedChange={setEmailEnabled}
-            />
+            {integrations.data !== undefined ? (
+              <Switch
+                id="email-toggle"
+                checked={integrations.data?.email?.enabled ?? false}
+                onCheckedChange={() =>
+                  switchIntegration.mutate({
+                    type: "email",
+                    action: "on",
+                    projectId: projectId as number,
+                  })
+                }
+              />
+            ) : (
+              <Spinner />
+            )}
           </div>
 
-          {emailEnabled && (
+          {integrations.data?.email?.enabled && (
             <>
               <Separator />
-              <div className="flex flex-col gap-4 w-full">
-                <div className="flex flex-col gap-2 w-full">
-                  <Label htmlFor="email-from" className="text-sm font-medium">
-                    From
-                  </Label>
-                  <Input
-                    id="email-from"
-                    type="email"
-                    placeholder="sender@example.com"
-                    value={emailFrom}
-                    onChange={(e) => setEmailFrom(e.target.value)}
-                    className="w-full"
-                  />
-                  <p className="text-xs text-muted-foreground">
-                    Email address to send summaries from
-                  </p>
-                </div>
-                <div className="flex flex-col gap-2 w-full">
-                  <Label htmlFor="email-cc" className="text-sm font-medium">
-                    CC
-                  </Label>
-                  <Input
-                    id="email-cc"
-                    type="email"
-                    placeholder="recipient@example.com"
-                    value={emailCc}
-                    onChange={(e) => setEmailCc(e.target.value)}
-                    className="w-full"
-                  />
-                  <p className="text-xs text-muted-foreground">
-                    Email address to send summaries to (optional)
-                  </p>
-                </div>
-              </div>
+              {
+                <EmailIntegrationForm
+                  id={emailIntegrationFormId}
+                  initialValues={
+                    (integrations.data?.email
+                      ?.config as unknown as EmailIntegrationFormValues) ?? {
+                      from: [],
+                      cc: [],
+                    }
+                  }
+                  onSubmit={async (values) => {
+                    await updateIntegration.mutateAsync({
+                      config: values,
+                      id: integrations.data?.email?.id as string,
+                      projectId: projectId as number,
+                    });
+                    setIsEmailFormDirty(false);
+                  }}
+                  onDirtyChange={setIsEmailFormDirty}
+                />
+              }
             </>
           )}
         </MainCard.Content>
 
-        {emailEnabled && (
-          <MainCard.Footer>
+        {integrations.data?.email?.enabled && (
+          <MainCard.Footer className="flex items-center justify-between">
             <div className="flex items-center gap-2 text-xs text-muted-foreground">
               <Zap className="size-3" />
               <span>Automation active</span>
             </div>
+            {isEmailFormDirty && (
+              <Button
+                variant="default"
+                type="submit"
+                disabled={updateIntegration.isPending}
+                form={emailIntegrationFormId}
+              >
+                {updateIntegration.isPending ? <Spinner /> : "Save"}
+              </Button>
+            )}
           </MainCard.Footer>
         )}
       </MainCard.Root>
 
       {/* Slack Integration */}
-      <MainCard.Root className="p-6 flex flex-col gap-4">
-        <MainCard.Header>
+      <MainCard.Root
+        className={cn(
+          "p-6 flex flex-col gap-4",
+          integrations.data?.slack?.enabled && "border-primary/20 bg-primary/10"
+        )}
+      >
+        <MainCard.Header className="flex items-start justify-between">
           <div className="flex items-center gap-3">
-            <MainCard.Icon>
+            <MainCard.Icon className="shrink-0">
               <MessageSquare className="size-5 text-primary" />
             </MainCard.Icon>
             <div className="flex flex-col gap-1">
@@ -136,15 +183,6 @@ function RouteComponent() {
               </MainCard.Description>
             </div>
           </div>
-          {slackEnabled && (
-            <Badge
-              variant="default"
-              className="bg-primary/10 text-primary border-primary/20"
-            >
-              <CheckCircle2 className="size-3 mr-1" />
-              Active
-            </Badge>
-          )}
         </MainCard.Header>
 
         <MainCard.Content className="flex-col gap-4">
@@ -160,12 +198,18 @@ function RouteComponent() {
             </div>
             <Switch
               id="slack-toggle"
-              checked={slackEnabled}
-              onCheckedChange={setSlackEnabled}
+              checked={integrations.data?.slack?.enabled ?? false}
+              onCheckedChange={() =>
+                switchIntegration.mutate({
+                  type: "slack",
+                  action: "on",
+                  projectId: projectId as number,
+                })
+              }
             />
           </div>
 
-          {slackEnabled && (
+          {integrations.data?.slack?.enabled && (
             <>
               <Separator />
               <div className="flex flex-col gap-3 w-full">
@@ -177,8 +221,11 @@ function RouteComponent() {
                     <Button
                       variant="default"
                       className="w-fit"
-                      onClick={() => {
-                        // Placeholder - no logic implementation
+                      onClick={async () => {
+                        await signIn.social({
+                          provider: "slack",
+                          scopes: ["channels:read", "chat:write"],
+                        });
                       }}
                     >
                       <LogIn className="size-4" />
@@ -196,7 +243,7 @@ function RouteComponent() {
           )}
         </MainCard.Content>
 
-        {slackEnabled && (
+        {integrations.data?.slack?.enabled && (
           <MainCard.Footer>
             <div className="flex items-center gap-2 text-xs text-muted-foreground">
               <Zap className="size-3" />

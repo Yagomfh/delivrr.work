@@ -71,7 +71,7 @@ function Icon({
   return (
     <div
       className={cn(
-        "flex items-center justify-center size-10 rounded-lg bg-primary/10 border border-primary/20",
+        "flex items-center justify-center size-8 sm:size-10 rounded-lg bg-primary/10 border border-primary/20 shrink-0",
         className
       )}
     >

@@ -1,4 +1,5 @@
 import { useSession } from "@/integrations/better-auth/auth-client";
+import { appMiddleware } from "@/integrations/better-auth/middlewares";
 import { FileRoutesByTo } from "@/routeTree.gen";
 import { createFileRoute, Link, Outlet } from "@tanstack/react-router";
 import { zodValidator } from "@tanstack/zod-adapter";
@@ -11,6 +12,9 @@ export const Route = createFileRoute("/_auth")({
       redirect: z.string().default("/app"),
     })
   ),
+  server: {
+    middleware: [appMiddleware],
+  },
 });
 
 function RouteComponent() {

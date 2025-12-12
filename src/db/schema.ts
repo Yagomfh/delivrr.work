@@ -4,6 +4,7 @@ import {
   customType,
   index,
   integer,
+  jsonb,
   pgEnum,
   pgTable,
   real,
@@ -103,26 +104,24 @@ export const githubInstallationsRelations = relations(
   })
 );
 
-export const notifications = pgTable(
-  "notifications",
-  {
-    id: serial("id").primaryKey(),
-    userId: text("user_id")
-      .notNull()
-      .references(() => user.id),
-    title: text("title").notNull(),
-    message: text("message").notNull(),
-    read: boolean("read").default(false),
-    url: text("action_url"),
-    createdAt: timestamp("created_at").defaultNow().notNull(),
-    updatedAt: timestamp("updated_at").defaultNow().notNull(),
-  },
-  (table) => [index("notifications_userId_idx").on(table.userId)]
-);
+export const integrationTypeEnum = pgEnum("integration_type", [
+  "email",
+  "slack",
+]);
 
-export const notificationsRelations = relations(notifications, ({ one }) => ({
-  user: one(user, {
-    fields: [notifications.userId],
-    references: [user.id],
+export const integrations = pgTable("integrations", {
+  id: text("id").primaryKey(),
+  type: integrationTypeEnum("type").notNull(),
+  enabled: boolean("enabled").default(false),
+  config: jsonb("config"),
+  projectId: integer("project_id").references(() => projects.id),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+export const integrationsRelations = relations(integrations, ({ one }) => ({
+  project: one(projects, {
+    fields: [integrations.projectId],
+    references: [projects.id],
   }),
 }));
