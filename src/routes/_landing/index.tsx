@@ -1,16 +1,6 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
-import { Button } from "@/components/ui/button";
+import { createFileRoute } from "@tanstack/react-router";
+import { LandingPage } from "./landing-page";
 
 export const Route = createFileRoute("/_landing/")({
-  component: App,
+  component: LandingPage,
 });
-
-function App() {
-  return (
-    <div>
-      <Button asChild>
-        <Link to="/app">Go to app</Link>
-      </Button>
-    </div>
-  );
-}

@@ -125,3 +125,9 @@ export const integrationsRelations = relations(integrations, ({ one }) => ({
     references: [projects.id],
   }),
 }));
+
+export const waitingList = pgTable("waiting_list", {
+  id: serial("id").primaryKey(),
+  email: text("email").notNull().unique(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
