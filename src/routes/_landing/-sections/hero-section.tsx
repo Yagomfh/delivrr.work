@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Check } from "lucide-react";
-import { AnimatedSummaryCard } from "@/routes/_landing/sections/animated-summary-card";
+import { AnimatedSummaryCard } from "@/routes/_landing/-sections/animated-summary-card";
 import { WaitingListDialog } from "@/components/dialogs/waiting-list-dialog";
 import { BackgroundBeams } from "@/components/ui/background-beams";
 
