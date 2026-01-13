@@ -16,7 +16,9 @@ export function HeroSection() {
           <div className="order-2 flex-1 space-y-6 md:order-1">
             <div className="inline-flex items-center gap-2 rounded-full border border-border bg-background/80 px-3 py-1 text-xs text-muted-foreground shadow-sm">
               <span className="inline-flex h-1.5 w-1.5 rounded-full bg-emerald-500" />
-              <span className="font-medium text-foreground">Pre-release</span>
+              <span className="font-medium text-foreground">
+                Alpha · Onboarding beta users
+              </span>
             </div>
 
             <h1 className="text-balance text-3xl font-semibold tracking-tight sm:text-4xl lg:text-5xl">
@@ -33,7 +35,9 @@ export function HeroSection() {
               Delivrr Work connects to your GitHub projects, generates concise
               AI summaries of pull requests and commits, and automatically
               delivers them to your teams or your client&apos;s inboxes and
-              Slack channels.
+              Slack channels. We&apos;re currently in alpha and onboarding early
+              users to help shape the beta—request early access to be one of the
+              first teams onboarded.
             </p>
 
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
@@ -42,7 +46,7 @@ export function HeroSection() {
                 className="gap-1.5"
                 onClick={() => setDialogOpen(true)}
               >
-                Join the waiting list
+                Request early access
                 <ArrowRight className="h-4 w-4" />
               </Button>
               <Button

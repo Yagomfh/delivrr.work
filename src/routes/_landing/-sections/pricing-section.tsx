@@ -99,7 +99,7 @@ export function PricingSection() {
               <ul className="space-y-3 text-sm">
                 <li className="flex items-start gap-2">
                   <Check className="mt-0.5 h-4 w-4 shrink-0 text-emerald-500" />
-                  <span>Unlimited summaries</span>
+                  <span>1000 summaries per month</span>
                 </li>
                 <li className="flex items-start gap-2">
                   <Check className="mt-0.5 h-4 w-4 shrink-0 text-emerald-500" />
