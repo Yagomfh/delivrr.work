@@ -1,3 +1,6 @@
+import { Link } from "@tanstack/react-router";
+import { cn } from "@/lib/utils";
+
 export function CompaniesSection() {
   return (
     <section
@@ -16,15 +19,36 @@ export function CompaniesSection() {
             </p>
           </div>
           <div className="grid grid-cols-2 gap-4 text-xs text-muted-foreground sm:grid-cols-3">
-            <span className="rounded-full border border-dashed border-border px-3 py-1.5 text-center">
+            <Link
+              to="/for-teams"
+              className={cn(
+                "rounded-full border border-dashed border-border px-3 py-1.5 text-center",
+                "transition-colors hover:border-primary hover:text-foreground hover:bg-primary/5",
+                "cursor-pointer"
+              )}
+            >
               Remote-first startups
-            </span>
-            <span className="rounded-full border border-dashed border-border px-3 py-1.5 text-center">
+            </Link>
+            <Link
+              to="/for-teams"
+              className={cn(
+                "rounded-full border border-dashed border-border px-3 py-1.5 text-center",
+                "transition-colors hover:border-primary hover:text-foreground hover:bg-primary/5",
+                "cursor-pointer"
+              )}
+            >
               Platform teams
-            </span>
-            <span className="rounded-full border border-dashed border-border px-3 py-1.5 text-center">
+            </Link>
+            <Link
+              to="/for-agencies"
+              className={cn(
+                "rounded-full border border-dashed border-border px-3 py-1.5 text-center",
+                "transition-colors hover:border-primary hover:text-foreground hover:bg-primary/5",
+                "cursor-pointer"
+              )}
+            >
               Agencies &amp; consultancies
-            </span>
+            </Link>
           </div>
         </div>
       </div>

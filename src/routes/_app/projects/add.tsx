@@ -11,7 +11,31 @@ import { MainCard } from "@/components/cards/main-card";
 import { FolderPlus } from "lucide-react";
 import { PageHeader } from "@/components/headers/page-header";
 
+const baseUrl = "https://delivrr.work";
+
 export const Route = createFileRoute("/_app/projects/add")({
+  head: () => ({
+    meta: [
+      {
+        title: "Add Project | delivrr.work",
+      },
+      {
+        name: "description",
+        content:
+          "Create a new project and connect a GitHub repository to start generating automated summaries.",
+      },
+      {
+        name: "robots",
+        content: "noindex,nofollow",
+      },
+    ],
+    links: [
+      {
+        rel: "canonical",
+        href: `${baseUrl}/projects/add`,
+      },
+    ],
+  }),
   component: RouteComponent,
 });
 

@@ -14,7 +14,31 @@ import { cn } from "@/lib/utils";
 import { PageHeader } from "@/components/headers/page-header";
 import { MainCard } from "@/components/cards/main-card";
 
+const baseUrl = "https://delivrr.work";
+
 export const Route = createFileRoute("/_app/settings/_settings")({
+  head: () => ({
+    meta: [
+      {
+        title: "Settings | delivrr.work",
+      },
+      {
+        name: "description",
+        content:
+          "Manage your account settings, preferences, billing, and security options.",
+      },
+      {
+        name: "robots",
+        content: "noindex,nofollow",
+      },
+    ],
+    links: [
+      {
+        rel: "canonical",
+        href: `${baseUrl}/settings`,
+      },
+    ],
+  }),
   component: RouteComponent,
 });
 

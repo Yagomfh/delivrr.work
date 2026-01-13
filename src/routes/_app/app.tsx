@@ -13,7 +13,31 @@ import { Search } from "lucide-react";
 import { PaginationComponent } from "@/components/ui/pagination";
 import { PageHeader } from "@/components/headers/page-header";
 
+const baseUrl = "https://delivrr.work";
+
 export const Route = createFileRoute("/_app/app")({
+  head: () => ({
+    meta: [
+      {
+        title: "Summaries Overview | delivrr.work",
+      },
+      {
+        name: "description",
+        content:
+          "View and manage your GitHub activity summaries. Track pull requests, commits, and project updates in one place.",
+      },
+      {
+        name: "robots",
+        content: "noindex,nofollow",
+      },
+    ],
+    links: [
+      {
+        rel: "canonical",
+        href: `${baseUrl}/app`,
+      },
+    ],
+  }),
   component: RouteComponent,
 });
 

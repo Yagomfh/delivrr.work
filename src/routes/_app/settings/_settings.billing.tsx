@@ -17,7 +17,31 @@ import {
   X,
 } from "lucide-react";
 
+const baseUrl = "https://delivrr.work";
+
 export const Route = createFileRoute("/_app/settings/_settings/billing")({
+  head: () => ({
+    meta: [
+      {
+        title: "Billing & Subscription | delivrr.work",
+      },
+      {
+        name: "description",
+        content:
+          "Manage your subscription, billing information, and view available plans.",
+      },
+      {
+        name: "robots",
+        content: "noindex,nofollow",
+      },
+    ],
+    links: [
+      {
+        rel: "canonical",
+        href: `${baseUrl}/settings/billing`,
+      },
+    ],
+  }),
   component: RouteComponent,
 });
 

@@ -48,11 +48,15 @@ export function PricingSection() {
               <ul className="space-y-3 text-sm">
                 <li className="flex items-start gap-2">
                   <Check className="mt-0.5 h-4 w-4 shrink-0 text-emerald-500" />
-                  <span>Up to 50 summaries per month</span>
+                  <span>Up to 25 summaries per month</span>
                 </li>
                 <li className="flex items-start gap-2">
                   <Check className="mt-0.5 h-4 w-4 shrink-0 text-emerald-500" />
-                  <span>Connect up to 3 GitHub repositories</span>
+                  <span>Max commit payload size: 1MB</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <Check className="mt-0.5 h-4 w-4 shrink-0 text-emerald-500" />
+                  <span>Connect 1 GitHub repository</span>
                 </li>
                 <li className="flex items-start gap-2">
                   <Check className="mt-0.5 h-4 w-4 shrink-0 text-emerald-500" />
@@ -103,6 +107,10 @@ export function PricingSection() {
                 </li>
                 <li className="flex items-start gap-2">
                   <Check className="mt-0.5 h-4 w-4 shrink-0 text-emerald-500" />
+                  <span>Max commit payload size: 10MB</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <Check className="mt-0.5 h-4 w-4 shrink-0 text-emerald-500" />
                   <span>Unlimited GitHub repositories</span>
                 </li>
                 <li className="flex items-start gap-2">
@@ -147,6 +155,10 @@ export function PricingSection() {
             <p className="text-xs text-muted-foreground">
               All plans include cancel anytime, no lock-in. Beta users who join
               the waiting list will receive early access and special pricing.
+            </p>
+            <p className="mt-2 text-[11px] text-muted-foreground">
+              Summaries are subject to a reasonable commit payload size limit to
+              keep performance fast, very large pull requests may be skipped.
             </p>
           </div>
         </div>

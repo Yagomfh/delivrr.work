@@ -70,7 +70,7 @@ export function HeroSection() {
               </div>
               <div className="flex items-center gap-2">
                 <Check className="h-4 w-4 text-emerald-500" />
-                <span>Email &amp; Slack deliveries</span>
+                <span>Email &amp; Slack delivery</span>
               </div>
             </div>
           </div>

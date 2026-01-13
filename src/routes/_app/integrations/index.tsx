@@ -28,7 +28,31 @@ import {
 } from "@/components/forms/email-integration-form";
 import { signIn } from "@/integrations/better-auth/auth-client";
 
+const baseUrl = "https://delivrr.work";
+
 export const Route = createFileRoute("/_app/integrations/")({
+  head: () => ({
+    meta: [
+      {
+        title: "Integrations | delivrr.work",
+      },
+      {
+        name: "description",
+        content:
+          "Configure email and Slack integrations to automatically receive GitHub activity summaries. Set up automated delivery workflows.",
+      },
+      {
+        name: "robots",
+        content: "noindex,nofollow",
+      },
+    ],
+    links: [
+      {
+        rel: "canonical",
+        href: `${baseUrl}/integrations`,
+      },
+    ],
+  }),
   component: RouteComponent,
 });
 

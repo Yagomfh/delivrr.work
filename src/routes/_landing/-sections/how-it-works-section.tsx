@@ -36,7 +36,7 @@ export function HowItWorksSection() {
             How it works
           </p>
           <h2 className="text-balance text-2xl font-semibold tracking-tight sm:text-3xl">
-            Set up automated delivery in minutes
+            How automated GitHub summaries work
           </h2>
           <p className="mx-auto max-w-2xl text-sm text-muted-foreground sm:text-base">
             Configure your delivery pipelines once and let Delivrr handle the
@@ -48,8 +48,8 @@ export function HowItWorksSection() {
         <div className="grid gap-4 md:grid-cols-4">
           <StepCard
             step="01"
-            title="Connect repositories"
-            description="Connect GitHub repositories and configure project scopes for internal or external delivery."
+            title="Connect GitHub repositories"
+            description="Link your GitHub repositories and configure project scopes for automated pull request summaries and client reporting."
           />
           <StepCard
             step="02"

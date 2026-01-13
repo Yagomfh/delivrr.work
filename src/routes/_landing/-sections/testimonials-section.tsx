@@ -3,58 +3,58 @@ import { motion } from "motion/react";
 
 const testimonials = [
   {
-    text: "The automated delivery workflows are a game-changer. We set it up once and now every deployment automatically sends summaries to our product team via Slack, no manual work needed.",
+    text: "We joined the alpha expecting rough edges, but the delivery workflows are already a game-changer. Even in this early version, every deployment automatically sends summaries to our product team via Slack.",
     image: "https://randomuser.me/api/portraits/women/1.jpg",
     name: "Briana Patton",
-    role: "Head of Engineering · Remote SaaS team",
+    role: "Solo founder",
   },
   {
-    text: "I love how Delivrr automatically delivers summaries to both email and Slack. Our stakeholders get updates in their preferred channel without us having to remember who wants what.",
+    text: "It’s clearly still a WIP, but Delivrr already handles the boring parts for us. Summaries go out to both email and Slack automatically, so stakeholders get updates without us juggling channels.",
     image: "https://randomuser.me/api/portraits/men/2.jpg",
     name: "Bilal Ahmed",
-    role: "Staff Engineer · Platform",
+    role: "Freelance platform engineer",
   },
   {
-    text: "The semantic search engine saved me hours last week. I needed to verify when a feature was deployed and found it instantly by searching our delivery history instead of digging through GitHub.",
+    text: "The alpha’s semantic search saved me hours last week. I needed to verify when a feature was deployed and found it instantly by searching our delivery history instead of digging through GitHub.",
     image: "https://randomuser.me/api/portraits/women/3.jpg",
     name: "Saman Malik",
-    role: "Engineering Manager",
+    role: "Agency owner",
   },
   {
-    text: "Being able to configure the AI parameters means our summaries match our team's communication style perfectly. We tuned it to be concise but technical, and it's exactly what we needed.",
+    text: "You can tell the AI controls are still evolving, but they’re already super useful. With a bit of tuning, our summaries feel close to how our team actually writes updates.",
     image: "https://randomuser.me/api/portraits/men/4.jpg",
     name: "Omar Raza",
-    role: "VP of Product",
+    role: "Open source collaborator",
   },
   {
-    text: "The multi-channel delivery is brilliant. Our engineering team gets Slack notifications, while executives get email digests. Everyone stays informed without any extra configuration.",
+    text: "For an alpha, the multi-channel delivery is surprisingly polished. Our engineers get Slack pings, execs get email digests, and everyone stays informed with almost no extra setup.",
     image: "https://randomuser.me/api/portraits/women/5.jpg",
     name: "Zainab Hussain",
-    role: "Technical Lead",
+    role: "Freelance tech lead",
   },
   {
-    text: "I use the semantic search constantly to track delivery artifacts across our project timeline. It's like having a searchable history of everything we've shipped.",
+    text: "Even though the UI is still changing, I use the semantic search in the alpha constantly. It already feels like a searchable history of everything we’ve shipped.",
     image: "https://randomuser.me/api/portraits/women/6.jpg",
     name: "Aliza Khan",
-    role: "Product Operations",
-  },
-  {
-    text: "The automated workflows mean we never miss a delivery update. Every PR merge and deployment automatically triggers a summary, it's completely hands-off now.",
-    image: "https://randomuser.me/api/portraits/men/7.jpg",
-    name: "Farhan Siddiqui",
-    role: "CTO · Early-stage startup",
-  },
-  {
-    text: "Configuring the AI parameters to match our tone was easy. Now our summaries read like they were written by our team, not a generic bot. Stakeholders love it.",
-    image: "https://randomuser.me/api/portraits/women/8.jpg",
-    name: "Sana Sheikh",
     role: "Founder",
   },
   {
-    text: "The event-driven distribution is perfect for our async team. Summaries automatically go to the right channels at the right time, keeping everyone aligned without meetings.",
+    text: "There are a few alpha quirks here and there, but the automated workflows mean we basically never miss a delivery update anymore. Every PR merge and deployment triggers a summary for the right people.",
+    image: "https://randomuser.me/api/portraits/men/7.jpg",
+    name: "Farhan Siddiqui",
+    role: "Agency owner",
+  },
+  {
+    text: "We’re still tweaking things as the alpha ships new builds, but configuring the AI to match our tone was straightforward. Our summaries already feel like they were written by our team, not a generic bot.",
+    image: "https://randomuser.me/api/portraits/women/8.jpg",
+    name: "Sana Sheikh",
+    role: "Freelance product consultant",
+  },
+  {
+    text: "Even in alpha, the event-driven distribution fits our async team really well. Summaries flow to the right channels at the right time, so we stay aligned without adding more meetings.",
     image: "https://randomuser.me/api/portraits/men/9.jpg",
     name: "Hassan Ali",
-    role: "Engineering Director",
+    role: "Open source maintainer",
   },
 ];
 
@@ -81,14 +81,15 @@ export function TestimonialsSection() {
           className="mx-auto max-w-2xl text-center space-y-3"
         >
           <p className="text-xs font-medium uppercase tracking-[0.16em] text-primary">
-            Beta feedback
+            Alpha feedback
           </p>
           <h2 className="text-balance text-2xl font-semibold tracking-tight sm:text-3xl">
-            What our beta users say
+            What our early users say
           </h2>
           <p className="text-sm text-muted-foreground sm:text-base">
-            Early adopters are already using Delivrr to automate their delivery
-            workflows and keep their teams aligned with AI-powered summaries.
+            Delivrr is still in alpha, but our first users are already
+            automating delivery workflows and keeping their teams aligned with
+            AI-powered summaries—rough edges and all.
           </p>
         </motion.div>
 

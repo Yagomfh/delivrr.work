@@ -15,9 +15,14 @@ import { Route as LandingRouteImport } from './routes/_landing'
 import { Route as AuthRouteImport } from './routes/_auth'
 import { Route as AppRouteImport } from './routes/_app'
 import { Route as LandingIndexRouteImport } from './routes/_landing/index'
+import { Route as SitemapXmlRouteImport } from './routes/sitemap.xml'
 import { Route as ApiInngestRouteImport } from './routes/api/inngest'
 import { Route as LandingTermsOfServiceRouteImport } from './routes/_landing/terms-of-service'
 import { Route as LandingPrivacyPolicyRouteImport } from './routes/_landing/privacy-policy'
+import { Route as LandingForTeamsRouteImport } from './routes/_landing/for-teams'
+import { Route as LandingForAgenciesRouteImport } from './routes/_landing/for-agencies'
+import { Route as LandingContactRouteImport } from './routes/_landing/contact'
+import { Route as LandingAutomatedPrSummariesRouteImport } from './routes/_landing/automated-pr-summaries'
 import { Route as AuthSignInRouteImport } from './routes/_auth/sign-in'
 import { Route as AppConfigRouteImport } from './routes/_app/config'
 import { Route as AppAppRouteImport } from './routes/_app/app'
@@ -58,6 +63,11 @@ const LandingIndexRoute = LandingIndexRouteImport.update({
   path: '/',
   getParentRoute: () => LandingRoute,
 } as any)
+const SitemapXmlRoute = SitemapXmlRouteImport.update({
+  id: '/sitemap/xml',
+  path: '/sitemap/xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiInngestRoute = ApiInngestRouteImport.update({
   id: '/api/inngest',
   path: '/api/inngest',
@@ -73,6 +83,27 @@ const LandingPrivacyPolicyRoute = LandingPrivacyPolicyRouteImport.update({
   path: '/privacy-policy',
   getParentRoute: () => LandingRoute,
 } as any)
+const LandingForTeamsRoute = LandingForTeamsRouteImport.update({
+  id: '/for-teams',
+  path: '/for-teams',
+  getParentRoute: () => LandingRoute,
+} as any)
+const LandingForAgenciesRoute = LandingForAgenciesRouteImport.update({
+  id: '/for-agencies',
+  path: '/for-agencies',
+  getParentRoute: () => LandingRoute,
+} as any)
+const LandingContactRoute = LandingContactRouteImport.update({
+  id: '/contact',
+  path: '/contact',
+  getParentRoute: () => LandingRoute,
+} as any)
+const LandingAutomatedPrSummariesRoute =
+  LandingAutomatedPrSummariesRouteImport.update({
+    id: '/automated-pr-summaries',
+    path: '/automated-pr-summaries',
+    getParentRoute: () => LandingRoute,
+  } as any)
 const AuthSignInRoute = AuthSignInRouteImport.update({
   id: '/sign-in',
   path: '/sign-in',
@@ -157,9 +188,14 @@ export interface FileRoutesByFullPath {
   '/app': typeof AppAppRoute
   '/config': typeof AppConfigRoute
   '/sign-in': typeof AuthSignInRoute
+  '/automated-pr-summaries': typeof LandingAutomatedPrSummariesRoute
+  '/contact': typeof LandingContactRoute
+  '/for-agencies': typeof LandingForAgenciesRoute
+  '/for-teams': typeof LandingForTeamsRoute
   '/privacy-policy': typeof LandingPrivacyPolicyRoute
   '/terms-of-service': typeof LandingTermsOfServiceRoute
   '/api/inngest': typeof ApiInngestRoute
+  '/sitemap/xml': typeof SitemapXmlRoute
   '/': typeof LandingIndexRoute
   '/projects/add': typeof AppProjectsAddRoute
   '/settings': typeof AppSettingsSettingsRouteWithChildren
@@ -178,9 +214,14 @@ export interface FileRoutesByTo {
   '/app': typeof AppAppRoute
   '/config': typeof AppConfigRoute
   '/sign-in': typeof AuthSignInRoute
+  '/automated-pr-summaries': typeof LandingAutomatedPrSummariesRoute
+  '/contact': typeof LandingContactRoute
+  '/for-agencies': typeof LandingForAgenciesRoute
+  '/for-teams': typeof LandingForTeamsRoute
   '/privacy-policy': typeof LandingPrivacyPolicyRoute
   '/terms-of-service': typeof LandingTermsOfServiceRoute
   '/api/inngest': typeof ApiInngestRoute
+  '/sitemap/xml': typeof SitemapXmlRoute
   '/': typeof LandingIndexRoute
   '/projects/add': typeof AppProjectsAddRoute
   '/settings': typeof AppSettingsSettingsRouteWithChildren
@@ -203,9 +244,14 @@ export interface FileRoutesById {
   '/_app/app': typeof AppAppRoute
   '/_app/config': typeof AppConfigRoute
   '/_auth/sign-in': typeof AuthSignInRoute
+  '/_landing/automated-pr-summaries': typeof LandingAutomatedPrSummariesRoute
+  '/_landing/contact': typeof LandingContactRoute
+  '/_landing/for-agencies': typeof LandingForAgenciesRoute
+  '/_landing/for-teams': typeof LandingForTeamsRoute
   '/_landing/privacy-policy': typeof LandingPrivacyPolicyRoute
   '/_landing/terms-of-service': typeof LandingTermsOfServiceRoute
   '/api/inngest': typeof ApiInngestRoute
+  '/sitemap/xml': typeof SitemapXmlRoute
   '/_landing/': typeof LandingIndexRoute
   '/_app/projects/add': typeof AppProjectsAddRoute
   '/_app/settings': typeof AppSettingsRouteWithChildren
@@ -227,9 +273,14 @@ export interface FileRouteTypes {
     | '/app'
     | '/config'
     | '/sign-in'
+    | '/automated-pr-summaries'
+    | '/contact'
+    | '/for-agencies'
+    | '/for-teams'
     | '/privacy-policy'
     | '/terms-of-service'
     | '/api/inngest'
+    | '/sitemap/xml'
     | '/'
     | '/projects/add'
     | '/settings'
@@ -248,9 +299,14 @@ export interface FileRouteTypes {
     | '/app'
     | '/config'
     | '/sign-in'
+    | '/automated-pr-summaries'
+    | '/contact'
+    | '/for-agencies'
+    | '/for-teams'
     | '/privacy-policy'
     | '/terms-of-service'
     | '/api/inngest'
+    | '/sitemap/xml'
     | '/'
     | '/projects/add'
     | '/settings'
@@ -272,9 +328,14 @@ export interface FileRouteTypes {
     | '/_app/app'
     | '/_app/config'
     | '/_auth/sign-in'
+    | '/_landing/automated-pr-summaries'
+    | '/_landing/contact'
+    | '/_landing/for-agencies'
+    | '/_landing/for-teams'
     | '/_landing/privacy-policy'
     | '/_landing/terms-of-service'
     | '/api/inngest'
+    | '/sitemap/xml'
     | '/_landing/'
     | '/_app/projects/add'
     | '/_app/settings'
@@ -296,6 +357,7 @@ export interface RootRouteChildren {
   AuthRoute: typeof AuthRouteWithChildren
   LandingRoute: typeof LandingRouteWithChildren
   ApiInngestRoute: typeof ApiInngestRoute
+  SitemapXmlRoute: typeof SitemapXmlRoute
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
   ApiTrpcSplatRoute: typeof ApiTrpcSplatRoute
   ApiWebhooksGithubRoute: typeof ApiWebhooksGithubRoute
@@ -340,6 +402,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LandingIndexRouteImport
       parentRoute: typeof LandingRoute
     }
+    '/sitemap/xml': {
+      id: '/sitemap/xml'
+      path: '/sitemap/xml'
+      fullPath: '/sitemap/xml'
+      preLoaderRoute: typeof SitemapXmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/inngest': {
       id: '/api/inngest'
       path: '/api/inngest'
@@ -359,6 +428,34 @@ declare module '@tanstack/react-router' {
       path: '/privacy-policy'
       fullPath: '/privacy-policy'
       preLoaderRoute: typeof LandingPrivacyPolicyRouteImport
+      parentRoute: typeof LandingRoute
+    }
+    '/_landing/for-teams': {
+      id: '/_landing/for-teams'
+      path: '/for-teams'
+      fullPath: '/for-teams'
+      preLoaderRoute: typeof LandingForTeamsRouteImport
+      parentRoute: typeof LandingRoute
+    }
+    '/_landing/for-agencies': {
+      id: '/_landing/for-agencies'
+      path: '/for-agencies'
+      fullPath: '/for-agencies'
+      preLoaderRoute: typeof LandingForAgenciesRouteImport
+      parentRoute: typeof LandingRoute
+    }
+    '/_landing/contact': {
+      id: '/_landing/contact'
+      path: '/contact'
+      fullPath: '/contact'
+      preLoaderRoute: typeof LandingContactRouteImport
+      parentRoute: typeof LandingRoute
+    }
+    '/_landing/automated-pr-summaries': {
+      id: '/_landing/automated-pr-summaries'
+      path: '/automated-pr-summaries'
+      fullPath: '/automated-pr-summaries'
+      preLoaderRoute: typeof LandingAutomatedPrSummariesRouteImport
       parentRoute: typeof LandingRoute
     }
     '/_auth/sign-in': {
@@ -527,12 +624,20 @@ const AuthRouteChildren: AuthRouteChildren = {
 const AuthRouteWithChildren = AuthRoute._addFileChildren(AuthRouteChildren)
 
 interface LandingRouteChildren {
+  LandingAutomatedPrSummariesRoute: typeof LandingAutomatedPrSummariesRoute
+  LandingContactRoute: typeof LandingContactRoute
+  LandingForAgenciesRoute: typeof LandingForAgenciesRoute
+  LandingForTeamsRoute: typeof LandingForTeamsRoute
   LandingPrivacyPolicyRoute: typeof LandingPrivacyPolicyRoute
   LandingTermsOfServiceRoute: typeof LandingTermsOfServiceRoute
   LandingIndexRoute: typeof LandingIndexRoute
 }
 
 const LandingRouteChildren: LandingRouteChildren = {
+  LandingAutomatedPrSummariesRoute: LandingAutomatedPrSummariesRoute,
+  LandingContactRoute: LandingContactRoute,
+  LandingForAgenciesRoute: LandingForAgenciesRoute,
+  LandingForTeamsRoute: LandingForTeamsRoute,
   LandingPrivacyPolicyRoute: LandingPrivacyPolicyRoute,
   LandingTermsOfServiceRoute: LandingTermsOfServiceRoute,
   LandingIndexRoute: LandingIndexRoute,
@@ -546,6 +651,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthRoute: AuthRouteWithChildren,
   LandingRoute: LandingRouteWithChildren,
   ApiInngestRoute: ApiInngestRoute,
+  SitemapXmlRoute: SitemapXmlRoute,
   ApiAuthSplatRoute: ApiAuthSplatRoute,
   ApiTrpcSplatRoute: ApiTrpcSplatRoute,
   ApiWebhooksGithubRoute: ApiWebhooksGithubRoute,

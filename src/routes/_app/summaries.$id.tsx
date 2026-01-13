@@ -12,7 +12,31 @@ import { useSubscription } from "@trpc/tanstack-react-query";
 import { StatusBadge } from "@/components/badges/status-badge";
 import { Skeleton } from "@/components/ui/skeleton";
 
+const baseUrl = "https://delivrr.work";
+
 export const Route = createFileRoute("/_app/summaries/$id")({
+  head: ({ params }) => ({
+    meta: [
+      {
+        title: "Summary Details | delivrr.work",
+      },
+      {
+        name: "description",
+        content:
+          "View detailed GitHub activity summary including pull requests, commits, and changes.",
+      },
+      {
+        name: "robots",
+        content: "noindex,nofollow",
+      },
+    ],
+    links: [
+      {
+        rel: "canonical",
+        href: `${baseUrl}/summaries/${params.id}`,
+      },
+    ],
+  }),
   component: RouteComponent,
 });
 

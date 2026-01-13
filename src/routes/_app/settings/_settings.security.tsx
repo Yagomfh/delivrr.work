@@ -23,7 +23,31 @@ import {
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 
+const baseUrl = "https://delivrr.work";
+
 export const Route = createFileRoute("/_app/settings/_settings/security")({
+  head: () => ({
+    meta: [
+      {
+        title: "Security Settings | delivrr.work",
+      },
+      {
+        name: "description",
+        content:
+          "Manage your active sessions, security settings, and account access.",
+      },
+      {
+        name: "robots",
+        content: "noindex,nofollow",
+      },
+    ],
+    links: [
+      {
+        rel: "canonical",
+        href: `${baseUrl}/settings/security`,
+      },
+    ],
+  }),
   component: RouteComponent,
 });
 

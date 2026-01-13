@@ -4,6 +4,7 @@ import { projectsRouter } from "./routes/projects";
 import { summariesRouter } from "./routes/summaries";
 import { integrationsRouter } from "./routes/integrations";
 import { waitingListRouter } from "./routes/waiting-list";
+import { contactRouter } from "./routes/contact";
 
 export const trpcRouter = createTRPCRouter({
   github: githubRouter,
@@ -11,5 +12,6 @@ export const trpcRouter = createTRPCRouter({
   summaries: summariesRouter,
   integrations: integrationsRouter,
   waitingList: waitingListRouter,
+  contact: contactRouter,
 });
 export type TRPCRouter = typeof trpcRouter;

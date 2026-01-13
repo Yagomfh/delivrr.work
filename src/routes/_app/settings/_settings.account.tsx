@@ -18,7 +18,31 @@ import { useSession } from "@/integrations/better-auth/auth-client";
 import { getInitials } from "@/lib/utils";
 import { useState } from "react";
 
+const baseUrl = "https://delivrr.work";
+
 export const Route = createFileRoute("/_app/settings/_settings/account")({
+  head: () => ({
+    meta: [
+      {
+        title: "Account Settings | delivrr.work",
+      },
+      {
+        name: "description",
+        content:
+          "Manage your account information, profile details, and usage statistics.",
+      },
+      {
+        name: "robots",
+        content: "noindex,nofollow",
+      },
+    ],
+    links: [
+      {
+        rel: "canonical",
+        href: `${baseUrl}/settings/account`,
+      },
+    ],
+  }),
   component: RouteComponent,
 });
 

@@ -4,7 +4,31 @@ import { signIn } from "@/integrations/better-auth/auth-client";
 import { Spinner } from "@/components/ui/spinner";
 import { useState } from "react";
 
+const baseUrl = "https://delivrr.work";
+
 export const Route = createFileRoute("/_auth/sign-in")({
+  head: () => ({
+    meta: [
+      {
+        title: "Sign In | delivrr.work",
+      },
+      {
+        name: "description",
+        content:
+          "Sign in to delivrr.work with your GitHub account to access automated GitHub activity summaries.",
+      },
+      {
+        name: "robots",
+        content: "noindex,nofollow",
+      },
+    ],
+    links: [
+      {
+        rel: "canonical",
+        href: `${baseUrl}/sign-in`,
+      },
+    ],
+  }),
   component: RouteComponent,
 });
 
