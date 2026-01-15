@@ -24,8 +24,7 @@ const getSummaries = async (
     hasSearch
       ? or(
           sql`${summaries.summarySearch} @@ websearch_to_tsquery('english', ${searchTerm})`,
-          ilike(summaries.headCommitMessage, `%${searchTerm}%`),
-          ilike(summaries.summarySearch, `%${searchTerm}%`)
+          ilike(summaries.headCommitMessage, `%${searchTerm}%`)
         )
       : undefined
   );

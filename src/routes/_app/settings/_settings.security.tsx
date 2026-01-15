@@ -143,7 +143,7 @@ function RouteComponent() {
   };
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex flex-col gap-4">
       {/* Current Session */}
       {currentSession && (
         <MainCard.Root className="p-6 flex flex-col gap-4">

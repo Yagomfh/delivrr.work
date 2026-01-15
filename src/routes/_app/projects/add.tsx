@@ -60,7 +60,7 @@ function RouteComponent() {
   );
   const formId = useId();
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex flex-col gap-4">
       <PageHeader
         title="Add a new project"
         description="Add a new project and connect a GitHub repository to start summarizing your work."

@@ -2,7 +2,6 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useSubscription } from "@trpc/tanstack-react-query";
 import { useSelectedProject } from "@/hooks/use-project";
 import { useTRPC } from "@/integrations/trpc/react";
-import { SummaryCard } from "@/components/cards/summary-card";
 import { useState, useEffect } from "react";
 import {
   InputGroup,
@@ -12,6 +11,9 @@ import {
 import { Search } from "lucide-react";
 import { PaginationComponent } from "@/components/ui/pagination";
 import { PageHeader } from "@/components/headers/page-header";
+import { Spinner } from "@/components/ui/spinner";
+import { SummaryCard } from "@/components/cards/summary-card";
+import { useDebouncedState } from "@tanstack/react-pacer/debouncer";
 
 const baseUrl = "https://delivrr.work";
 
@@ -45,10 +47,18 @@ function RouteComponent() {
   const trpc = useTRPC();
   const { id } = useSelectedProject();
   const [search, setSearch] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useDebouncedState(search, {
+    wait: 500,
+    enabled: search.length > 2,
+  });
   const [page, setPage] = useState(1);
   const subscription = useSubscription(
     trpc.summaries.list.subscriptionOptions(
-      { projectId: id as number, search: search.trim() || undefined, page },
+      {
+        projectId: id as number,
+        search: debouncedSearch.trim() || undefined,
+        page,
+      },
       {
         enabled: !!id,
       }
@@ -65,20 +75,28 @@ function RouteComponent() {
   const total = subscription.data?.total ?? 0;
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-4 h-full">
       <PageHeader title="Overview" description="Manage your summaries" />
       <InputGroup>
         <InputGroupInput
           placeholder="Search..."
           value={search}
-          onChange={(e) => setSearch(e.target.value)}
+          onChange={(e) => {
+            setSearch(e.target.value);
+            setDebouncedSearch(e.target.value);
+          }}
         />
         <InputGroupAddon>
           <Search />
         </InputGroupAddon>
         <InputGroupAddon align="inline-end">{total} results</InputGroupAddon>
       </InputGroup>
-      {summaries.length === 0 && (
+      {subscription.data === undefined && (
+        <div className="flex justify-center items-center h-full">
+          <Spinner />
+        </div>
+      )}
+      {summaries.length === 0 && subscription.data !== undefined && (
         <div className="flex flex-col gap-2">
           <p className="text-sm text-muted-foreground">No summaries found</p>
         </div>

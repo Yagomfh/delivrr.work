@@ -11,4 +11,4 @@ Disallow: /sign-in
 Disallow: /api/
 
 # Sitemap location
-Sitemap: https://delivrr.work/sitemap.xml
+Sitemap: https://delivrr.work/sitemap/xml
