@@ -17,6 +17,7 @@ import { Route as AppRouteImport } from './routes/_app'
 import { Route as LandingIndexRouteImport } from './routes/_landing/index'
 import { Route as SitemapXmlRouteImport } from './routes/sitemap.xml'
 import { Route as ApiInngestRouteImport } from './routes/api/inngest'
+import { Route as ApiHealthRouteImport } from './routes/api/health'
 import { Route as LandingTermsOfServiceRouteImport } from './routes/_landing/terms-of-service'
 import { Route as LandingPrivacyPolicyRouteImport } from './routes/_landing/privacy-policy'
 import { Route as LandingForTeamsRouteImport } from './routes/_landing/for-teams'
@@ -71,6 +72,11 @@ const SitemapXmlRoute = SitemapXmlRouteImport.update({
 const ApiInngestRoute = ApiInngestRouteImport.update({
   id: '/api/inngest',
   path: '/api/inngest',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiHealthRoute = ApiHealthRouteImport.update({
+  id: '/api/health',
+  path: '/api/health',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LandingTermsOfServiceRoute = LandingTermsOfServiceRouteImport.update({
@@ -194,6 +200,7 @@ export interface FileRoutesByFullPath {
   '/for-teams': typeof LandingForTeamsRoute
   '/privacy-policy': typeof LandingPrivacyPolicyRoute
   '/terms-of-service': typeof LandingTermsOfServiceRoute
+  '/api/health': typeof ApiHealthRoute
   '/api/inngest': typeof ApiInngestRoute
   '/sitemap/xml': typeof SitemapXmlRoute
   '/': typeof LandingIndexRoute
@@ -220,6 +227,7 @@ export interface FileRoutesByTo {
   '/for-teams': typeof LandingForTeamsRoute
   '/privacy-policy': typeof LandingPrivacyPolicyRoute
   '/terms-of-service': typeof LandingTermsOfServiceRoute
+  '/api/health': typeof ApiHealthRoute
   '/api/inngest': typeof ApiInngestRoute
   '/sitemap/xml': typeof SitemapXmlRoute
   '/': typeof LandingIndexRoute
@@ -250,6 +258,7 @@ export interface FileRoutesById {
   '/_landing/for-teams': typeof LandingForTeamsRoute
   '/_landing/privacy-policy': typeof LandingPrivacyPolicyRoute
   '/_landing/terms-of-service': typeof LandingTermsOfServiceRoute
+  '/api/health': typeof ApiHealthRoute
   '/api/inngest': typeof ApiInngestRoute
   '/sitemap/xml': typeof SitemapXmlRoute
   '/_landing/': typeof LandingIndexRoute
@@ -279,6 +288,7 @@ export interface FileRouteTypes {
     | '/for-teams'
     | '/privacy-policy'
     | '/terms-of-service'
+    | '/api/health'
     | '/api/inngest'
     | '/sitemap/xml'
     | '/'
@@ -305,6 +315,7 @@ export interface FileRouteTypes {
     | '/for-teams'
     | '/privacy-policy'
     | '/terms-of-service'
+    | '/api/health'
     | '/api/inngest'
     | '/sitemap/xml'
     | '/'
@@ -334,6 +345,7 @@ export interface FileRouteTypes {
     | '/_landing/for-teams'
     | '/_landing/privacy-policy'
     | '/_landing/terms-of-service'
+    | '/api/health'
     | '/api/inngest'
     | '/sitemap/xml'
     | '/_landing/'
@@ -356,6 +368,7 @@ export interface RootRouteChildren {
   AppRoute: typeof AppRouteWithChildren
   AuthRoute: typeof AuthRouteWithChildren
   LandingRoute: typeof LandingRouteWithChildren
+  ApiHealthRoute: typeof ApiHealthRoute
   ApiInngestRoute: typeof ApiInngestRoute
   SitemapXmlRoute: typeof SitemapXmlRoute
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
@@ -414,6 +427,13 @@ declare module '@tanstack/react-router' {
       path: '/api/inngest'
       fullPath: '/api/inngest'
       preLoaderRoute: typeof ApiInngestRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/health': {
+      id: '/api/health'
+      path: '/api/health'
+      fullPath: '/api/health'
+      preLoaderRoute: typeof ApiHealthRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_landing/terms-of-service': {
@@ -650,6 +670,7 @@ const rootRouteChildren: RootRouteChildren = {
   AppRoute: AppRouteWithChildren,
   AuthRoute: AuthRouteWithChildren,
   LandingRoute: LandingRouteWithChildren,
+  ApiHealthRoute: ApiHealthRoute,
   ApiInngestRoute: ApiInngestRoute,
   SitemapXmlRoute: SitemapXmlRoute,
   ApiAuthSplatRoute: ApiAuthSplatRoute,
