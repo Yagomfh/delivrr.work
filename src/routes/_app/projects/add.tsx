@@ -6,7 +6,6 @@ import { useTRPC } from "@/integrations/trpc/react";
 import { Button } from "@/components/ui/button";
 import { useId } from "react";
 import { Spinner } from "@/components/ui/spinner";
-import { useSelectedProject } from "@/hooks/use-project";
 import { MainCard } from "@/components/cards/main-card";
 import { FolderPlus } from "lucide-react";
 import { PageHeader } from "@/components/headers/page-header";
@@ -43,7 +42,6 @@ function RouteComponent() {
   const navigate = Route.useNavigate();
   const trpc = useTRPC();
   const queryClient = useQueryClient();
-  const { setSelected } = useSelectedProject();
   const createProject = useMutation(
     trpc.projects.create.mutationOptions({
       onSuccess: ([data]) => {
@@ -52,9 +50,6 @@ function RouteComponent() {
         });
         toast.success("Project created successfully");
         navigate({ to: "/app" });
-        setTimeout(() => {
-          setSelected(data.id);
-        }, 500);
       },
     })
   );

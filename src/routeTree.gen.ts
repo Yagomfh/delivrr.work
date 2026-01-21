@@ -24,6 +24,7 @@ import { Route as LandingForTeamsRouteImport } from './routes/_landing/for-teams
 import { Route as LandingForAgenciesRouteImport } from './routes/_landing/for-agencies'
 import { Route as LandingContactRouteImport } from './routes/_landing/contact'
 import { Route as LandingAutomatedPrSummariesRouteImport } from './routes/_landing/automated-pr-summaries'
+import { Route as AuthSignUpRouteImport } from './routes/_auth/sign-up'
 import { Route as AuthSignInRouteImport } from './routes/_auth/sign-in'
 import { Route as AppConfigRouteImport } from './routes/_app/config'
 import { Route as AppAppRouteImport } from './routes/_app/app'
@@ -31,7 +32,6 @@ import { Route as AppIntegrationsIndexRouteImport } from './routes/_app/integrat
 import { Route as ApiWebhooksGithubRouteImport } from './routes/api/webhooks/github'
 import { Route as ApiTrpcSplatRouteImport } from './routes/api/trpc/$'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
-import { Route as AppSummariesIdRouteImport } from './routes/_app/summaries.$id'
 import { Route as AppSettingsSettingsRouteImport } from './routes/_app/settings/_settings'
 import { Route as AppProjectsAddRouteImport } from './routes/_app/projects/add'
 import { Route as ApiInstallationsGithubNewRouteImport } from './routes/api/installations/github/new'
@@ -110,6 +110,11 @@ const LandingAutomatedPrSummariesRoute =
     path: '/automated-pr-summaries',
     getParentRoute: () => LandingRoute,
   } as any)
+const AuthSignUpRoute = AuthSignUpRouteImport.update({
+  id: '/sign-up',
+  path: '/sign-up',
+  getParentRoute: () => AuthRoute,
+} as any)
 const AuthSignInRoute = AuthSignInRouteImport.update({
   id: '/sign-in',
   path: '/sign-in',
@@ -144,11 +149,6 @@ const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
   id: '/api/auth/$',
   path: '/api/auth/$',
   getParentRoute: () => rootRouteImport,
-} as any)
-const AppSummariesIdRoute = AppSummariesIdRouteImport.update({
-  id: '/summaries/$id',
-  path: '/summaries/$id',
-  getParentRoute: () => AppRoute,
 } as any)
 const AppSettingsSettingsRoute = AppSettingsSettingsRouteImport.update({
   id: '/_settings',
@@ -194,6 +194,7 @@ export interface FileRoutesByFullPath {
   '/app': typeof AppAppRoute
   '/config': typeof AppConfigRoute
   '/sign-in': typeof AuthSignInRoute
+  '/sign-up': typeof AuthSignUpRoute
   '/automated-pr-summaries': typeof LandingAutomatedPrSummariesRoute
   '/contact': typeof LandingContactRoute
   '/for-agencies': typeof LandingForAgenciesRoute
@@ -206,7 +207,6 @@ export interface FileRoutesByFullPath {
   '/': typeof LandingIndexRoute
   '/projects/add': typeof AppProjectsAddRoute
   '/settings': typeof AppSettingsSettingsRouteWithChildren
-  '/summaries/$id': typeof AppSummariesIdRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/trpc/$': typeof ApiTrpcSplatRoute
   '/api/webhooks/github': typeof ApiWebhooksGithubRoute
@@ -221,6 +221,7 @@ export interface FileRoutesByTo {
   '/app': typeof AppAppRoute
   '/config': typeof AppConfigRoute
   '/sign-in': typeof AuthSignInRoute
+  '/sign-up': typeof AuthSignUpRoute
   '/automated-pr-summaries': typeof LandingAutomatedPrSummariesRoute
   '/contact': typeof LandingContactRoute
   '/for-agencies': typeof LandingForAgenciesRoute
@@ -233,7 +234,6 @@ export interface FileRoutesByTo {
   '/': typeof LandingIndexRoute
   '/projects/add': typeof AppProjectsAddRoute
   '/settings': typeof AppSettingsSettingsRouteWithChildren
-  '/summaries/$id': typeof AppSummariesIdRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/trpc/$': typeof ApiTrpcSplatRoute
   '/api/webhooks/github': typeof ApiWebhooksGithubRoute
@@ -252,6 +252,7 @@ export interface FileRoutesById {
   '/_app/app': typeof AppAppRoute
   '/_app/config': typeof AppConfigRoute
   '/_auth/sign-in': typeof AuthSignInRoute
+  '/_auth/sign-up': typeof AuthSignUpRoute
   '/_landing/automated-pr-summaries': typeof LandingAutomatedPrSummariesRoute
   '/_landing/contact': typeof LandingContactRoute
   '/_landing/for-agencies': typeof LandingForAgenciesRoute
@@ -265,7 +266,6 @@ export interface FileRoutesById {
   '/_app/projects/add': typeof AppProjectsAddRoute
   '/_app/settings': typeof AppSettingsRouteWithChildren
   '/_app/settings/_settings': typeof AppSettingsSettingsRouteWithChildren
-  '/_app/summaries/$id': typeof AppSummariesIdRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/trpc/$': typeof ApiTrpcSplatRoute
   '/api/webhooks/github': typeof ApiWebhooksGithubRoute
@@ -282,6 +282,7 @@ export interface FileRouteTypes {
     | '/app'
     | '/config'
     | '/sign-in'
+    | '/sign-up'
     | '/automated-pr-summaries'
     | '/contact'
     | '/for-agencies'
@@ -294,7 +295,6 @@ export interface FileRouteTypes {
     | '/'
     | '/projects/add'
     | '/settings'
-    | '/summaries/$id'
     | '/api/auth/$'
     | '/api/trpc/$'
     | '/api/webhooks/github'
@@ -309,6 +309,7 @@ export interface FileRouteTypes {
     | '/app'
     | '/config'
     | '/sign-in'
+    | '/sign-up'
     | '/automated-pr-summaries'
     | '/contact'
     | '/for-agencies'
@@ -321,7 +322,6 @@ export interface FileRouteTypes {
     | '/'
     | '/projects/add'
     | '/settings'
-    | '/summaries/$id'
     | '/api/auth/$'
     | '/api/trpc/$'
     | '/api/webhooks/github'
@@ -339,6 +339,7 @@ export interface FileRouteTypes {
     | '/_app/app'
     | '/_app/config'
     | '/_auth/sign-in'
+    | '/_auth/sign-up'
     | '/_landing/automated-pr-summaries'
     | '/_landing/contact'
     | '/_landing/for-agencies'
@@ -352,7 +353,6 @@ export interface FileRouteTypes {
     | '/_app/projects/add'
     | '/_app/settings'
     | '/_app/settings/_settings'
-    | '/_app/summaries/$id'
     | '/api/auth/$'
     | '/api/trpc/$'
     | '/api/webhooks/github'
@@ -478,6 +478,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LandingAutomatedPrSummariesRouteImport
       parentRoute: typeof LandingRoute
     }
+    '/_auth/sign-up': {
+      id: '/_auth/sign-up'
+      path: '/sign-up'
+      fullPath: '/sign-up'
+      preLoaderRoute: typeof AuthSignUpRouteImport
+      parentRoute: typeof AuthRoute
+    }
     '/_auth/sign-in': {
       id: '/_auth/sign-in'
       path: '/sign-in'
@@ -526,13 +533,6 @@ declare module '@tanstack/react-router' {
       fullPath: '/api/auth/$'
       preLoaderRoute: typeof ApiAuthSplatRouteImport
       parentRoute: typeof rootRouteImport
-    }
-    '/_app/summaries/$id': {
-      id: '/_app/summaries/$id'
-      path: '/summaries/$id'
-      fullPath: '/summaries/$id'
-      preLoaderRoute: typeof AppSummariesIdRouteImport
-      parentRoute: typeof AppRoute
     }
     '/_app/settings/_settings': {
       id: '/_app/settings/_settings'
@@ -618,7 +618,6 @@ interface AppRouteChildren {
   AppConfigRoute: typeof AppConfigRoute
   AppProjectsAddRoute: typeof AppProjectsAddRoute
   AppSettingsRoute: typeof AppSettingsRouteWithChildren
-  AppSummariesIdRoute: typeof AppSummariesIdRoute
   AppIntegrationsIndexRoute: typeof AppIntegrationsIndexRoute
 }
 
@@ -627,7 +626,6 @@ const AppRouteChildren: AppRouteChildren = {
   AppConfigRoute: AppConfigRoute,
   AppProjectsAddRoute: AppProjectsAddRoute,
   AppSettingsRoute: AppSettingsRouteWithChildren,
-  AppSummariesIdRoute: AppSummariesIdRoute,
   AppIntegrationsIndexRoute: AppIntegrationsIndexRoute,
 }
 
@@ -635,10 +633,12 @@ const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
 
 interface AuthRouteChildren {
   AuthSignInRoute: typeof AuthSignInRoute
+  AuthSignUpRoute: typeof AuthSignUpRoute
 }
 
 const AuthRouteChildren: AuthRouteChildren = {
   AuthSignInRoute: AuthSignInRoute,
+  AuthSignUpRoute: AuthSignUpRoute,
 }
 
 const AuthRouteWithChildren = AuthRoute._addFileChildren(AuthRouteChildren)

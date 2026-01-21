@@ -1,8 +1,11 @@
 import { Button } from "@/components/ui/button";
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { signIn } from "@/integrations/better-auth/auth-client";
 import { Spinner } from "@/components/ui/spinner";
 import { useState } from "react";
+import { Separator } from "@/components/ui/separator";
+import { SignInForm, SignInFormValues } from "@/components/forms/sign-in-form";
+import { toast } from "sonner";
 
 const baseUrl = "https://delivrr.work";
 
@@ -36,7 +39,7 @@ function RouteComponent() {
   const search = Route.useSearch();
   const [loading, setLoading] = useState(false);
 
-  const handleSignIn = async () => {
+  const handleSignInWithGithub = async () => {
     setLoading(true);
     await signIn
       .social({
@@ -46,8 +49,20 @@ function RouteComponent() {
       })
       .catch(() => setLoading(false));
   };
+  const handleSignInWithEmail = async (values: SignInFormValues) => {
+    const response = await signIn.email({
+      email: values.email,
+      password: values.password,
+    })
+
+    if (response.error) {
+      toast.error(response.error.message);
+    }
+  };
   return (
-    <Button onClick={handleSignIn} disabled={loading}>
+    <div className="flex flex-col gap-4">
+
+    <Button variant="outline" onClick={handleSignInWithGithub} disabled={loading}>
       {!loading && (
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -61,5 +76,16 @@ function RouteComponent() {
       )}
       {loading ? <Spinner /> : "Continue with Github"}
     </Button>
+    <div className="flex flex-row gap-4 items-center">
+      <Separator className="flex-1" />
+      <p className="text-xs text-muted-foreground leading-relaxed">or continue with</p>
+      <Separator className="flex-1" />
+    </div>
+    <div className="flex flex-col gap-4">
+
+    <SignInForm onSubmit={handleSignInWithEmail} />
+    <p className="text-xs text-muted-foreground leading-relaxed text-center">Don't have an account? <Link to="/sign-up" className="text-foreground hover:text-foreground/80 underline underline-offset-4 transition-colors">Sign up</Link></p>
+    </div>
+    </div>
   );
 }

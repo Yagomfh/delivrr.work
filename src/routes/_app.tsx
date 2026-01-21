@@ -13,7 +13,7 @@ import { useTRPC } from "@/integrations/trpc/react";
 import { cn } from "@/lib/utils";
 import { SearchDialog } from "@/components/sidebar/search-dialog";
 import { ThemeSwitcher } from "@/components/sidebar/theme-switcher";
-import { NotificationsPopover } from "@/components/popovers/notifications-popover";
+import { CommitmentDialog } from "@/components/dialogs/commitment-dialog";
 
 export const Route = createFileRoute("/_app")({
   component: RouteComponent,
@@ -33,10 +33,6 @@ function RouteComponent() {
 
   if (isPending || isProjectsPending) {
     return <Loader />;
-  }
-
-  if (!projects?.length) {
-    navigate({ to: "/projects/add" });
   }
 
   return (
@@ -68,6 +64,7 @@ function RouteComponent() {
             </div>
             <div className="flex items-center gap-2">
               {/* <NotificationsPopover /> */}
+              <CommitmentDialog />
               <ThemeSwitcher />
             </div>
           </div>

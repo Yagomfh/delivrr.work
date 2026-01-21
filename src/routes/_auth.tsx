@@ -28,7 +28,7 @@ function RouteComponent() {
   return (
     <div className="flex items-center justify-center min-h-screen bg-accent dark:bg-neutral-900">
       <div className="w-full max-w-sm px-6 py-12 bg-background rounded-lg shadow-lg">
-        <div className="flex flex-col gap-8">
+        <div className="flex flex-col gap-6">
           <div className="flex flex-col gap-3">
             <div className="flex items-center gap-3">
               <img
@@ -44,8 +44,7 @@ function RouteComponent() {
               Welcome on board! 🎉
             </h1>
             <p className="text-xs text-muted-foreground leading-relaxed">
-              We use GitHub authentication to securely connect with your
-              repositories and generate summaries for you.
+              Log in using Github for faster setup
             </p>
           </div>
 

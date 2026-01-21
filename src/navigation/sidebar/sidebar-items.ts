@@ -1,9 +1,11 @@
 import {
   LayoutDashboard,
-  ChartBar,
   type LucideIcon,
   Settings,
+  Folder,
   Zap,
+  ListTodo,
+  Box,
 } from "lucide-react";
 
 export interface NavSubItem {
@@ -34,7 +36,7 @@ export interface NavGroup {
 export const sidebarItems: NavGroup[] = [
   {
     id: 1,
-    label: "Summaries",
+    label: "",
     items: [
       {
         title: "Overview",
@@ -42,9 +44,20 @@ export const sidebarItems: NavGroup[] = [
         icon: LayoutDashboard,
       },
       {
-        title: "Configuration",
+        title: "Commitments",
         url: "/config",
-        icon: Settings,
+        icon: ListTodo,
+      },
+    ],
+  },
+  {
+    id: 2,
+    label: "Workspace",
+    items: [
+      {
+        title: "Projects",
+        url: "/settings/account",
+        icon: Box,
       },
       {
         title: "Integrations",
